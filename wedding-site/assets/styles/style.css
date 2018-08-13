@@ -17,7 +17,7 @@
 
 /* =======================================================
 *
-* 	Template Style 
+* 	Template Style
 *	Edit this section
 *
 * ======================================================= */
@@ -61,7 +61,7 @@ body {
   background: #fff;
   color: #848484;
   font-weight: 300;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
 }
 
 body.offcanvas {
@@ -117,6 +117,10 @@ figure {
   /* position: relative; */
   margin-bottom: 0;
   z-index: 9999999;
+}
+
+.ngui-sticky-stuck {
+  z-index: 9999;
 }
 
 .stuck {
@@ -382,7 +386,7 @@ figure {
 .sf-arrows ul .sfHover > .sf-with-ul:after {
   border-left-color: #ccc;
 }
-/* 
+/*
 #header-section {
   padding: 0;
   position: relative;
@@ -549,11 +553,11 @@ figure {
   -o-box-shadow: 0 5px 15px 4px rgba(0, 0, 0, 0.09);
   box-shadow: 0 5px 15px 4px rgba(0, 0, 0, 0.09);
 }
-/* 
+/*
 .site-header.has-image #primary-menu .sub-menu:before {
   display: none;
 } */
-/* 
+/*
 #primary-menu .sub-menu a {
   letter-spacing: 0;
   padding: 0 15px;
