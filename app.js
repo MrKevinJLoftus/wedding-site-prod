@@ -10,7 +10,7 @@ const rsvpRoutes = require('./routes/rsvp');
 
 const app = express();
 
-mongoose.connect(process.env.MONGO_ATLAS_CS)
+mongoose.connect(process.env.MONGO_ATLAS_CS, {useNewUrlParser: true})
   .then(() => {
     console.log('Connected to database!');
   })
