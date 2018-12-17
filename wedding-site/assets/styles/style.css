@@ -205,7 +205,7 @@ figure {
   }
 }
 
-.overlay {
+/* .overlay {
   position: absolute !important;
   width: 100%;
   top: 0;
@@ -214,7 +214,7 @@ figure {
   right: 0;
   z-index: 1;
   background: rgba(0, 0, 0, 0.4);
-}
+} */
 
 .cover {
   background-size: cover;
@@ -356,7 +356,7 @@ figure {
   *padding-right: 1em;
 }
 
-.sf-arrows .sf-with-ul:after {
+/* .sf-arrows .sf-with-ul:after {
   content: '';
   position: absolute;
   top: 50%;
@@ -366,7 +366,7 @@ figure {
   width: 0;
   border: 5px solid transparent;
   border-top-color: #ccc;
-}
+} */
 
 .sf-arrows > li > .sf-with-ul:focus:after,
 .sf-arrows > li:hover > .sf-with-ul:after,
@@ -448,16 +448,16 @@ figure {
   color: #4B0082 !important;
 }
 
-#primary-menu > li > .sf-with-ul:after {
+/* #primary-menu > li > .sf-with-ul:after {
   border: none !important;
   font-family: 'icomoon';
   font-style: normal;
   font-weight: normal;
   font-variant: normal;
   text-transform: none;
-  line-height: 1;
+  line-height: 1; */
   /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
+  /* -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   position: absolute;
   float: right;
@@ -467,22 +467,22 @@ figure {
   margin-top: -7px;
   content: "\e922";
   color: rgba(0, 0, 0, 0.5);
-}
+} */
 
 #primary-menu > li > ul li {
   position: relative;
 }
 
-#primary-menu > li > ul li > .sf-with-ul:after {
+/* #primary-menu > li > ul li > .sf-with-ul:after {
   border: none !important;
   font-family: 'icomoon';
   font-style: normal;
   font-weight: normal;
   font-variant: normal;
   text-transform: none;
-  line-height: 1;
+  line-height: 1; */
   /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
+  /* -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   position: absolute;
   float: right;
@@ -491,7 +491,7 @@ figure {
   font-size: 12px;
   content: "\e924";
   color: rgba(0, 0, 0, 0.5);
-}
+} */
 
 #primary-menu .sub-menu {
   padding: 10px 7px 10px;
@@ -739,14 +739,14 @@ figure {
   background-repeat: no-repeat;
 }
 
-#started .overlay {
+/* #started .overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
-}
+} */
 
 #started .form-control {
   background: rgba(0, 0, 0, 0.2);
@@ -1299,14 +1299,14 @@ figure {
   display: none;
 }
 
-.js #loader {
+/* .js #loader {
   display: block;
   position: absolute;
   left: 100px;
   top: 0;
-}
+} */
 
-.loader {
+/* .loader {
   position: fixed;
   left: 0px;
   top: 0px;
@@ -1314,4 +1314,4 @@ figure {
   height: 100%;
   z-index: 9999;
   background: url(../img/bab_nima.jpg) center no-repeat #222222;
-}
+} */
