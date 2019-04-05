@@ -1,7 +1,4 @@
 const jwt = require('jsonwebtoken');
-
-// middleware is just a function that takes in a req,res,next
-// and returns another req,res,next.
 module.exports = (req, res, next) => {
   // token is going to be the value of the 'authorization' http header
   // token will be in format "Bearer abcd1234..."
@@ -11,7 +8,7 @@ module.exports = (req, res, next) => {
     const decodedToken = jwt.verify(token,
       process.env.JWT_KEY
     );
-    req.userData = {username: decodedToken.username, userId: decodedToken.userId};
+    req.userData = {username: decodedToken.username, userId: decodedToken.userId, email: decodedToken.email};
     // if code gets here with no errors thrown, token is present and valid
     next();
   } catch (error) {

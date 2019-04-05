@@ -4,8 +4,7 @@ const uniqueValidator = require('mongoose-unique-validator');
 const userSchema = mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  guests: { type: [String] },
-  isAdmin: { type: Boolean }
+  email: { type: String, unique: true }
 });
 
 // mongoose schema validator "unique" does not actually prevent duplicates.
