@@ -71,7 +71,7 @@ function insertGuestsIntoDb(req, callback) {
       callback(stdError);
     }
     const tfdGuests = results.map(t => {
-      return {firstName: t.firstName, lastName: t.lastName, isPlusOne: t.isPlusOne, isAttending: false, canSeeHotel: t.canSeeHotel, hasRSVPd: false}
+      return {firstName: t.firstName, lastName: t.lastName, isPlusOne: t.isPlusOne, isAttending: false, hasRSVPd: false}
     });
     callback(null, tfdGuests);
   });

@@ -6,7 +6,6 @@ const guestSchema = mongoose.Schema({
   lastName: {type: String},
   isPlusOne: {type: Boolean},
   isAttending: {type: Boolean},
-  canSeeHotel: {type: Boolean},
   hasRSVPd: {type:Boolean}
 });
 

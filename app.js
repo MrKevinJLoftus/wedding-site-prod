@@ -9,7 +9,6 @@ const userRoutes = require('./routes/user');
 const rsvpRoutes = require('./routes/rsvp');
 const guestRoutes = require('./routes/guest');
 
-
 const app = express();
 
 // mongoose.connect(process.env.MONGO_ATLAS_CS)

@@ -69,10 +69,11 @@ var GuestService = /** @class */ (function () {
                         lastName: g.lastName,
                         isPlusOne: g.isPlusOne,
                         isAttending: g.isAttending,
-                        canSeeHotel: g.canSeeHotel,
                         hasRSVPd: g.hasRSVPd,
                         isValid: true
                     };
+                }).sort(function (a, b) {
+                    return a.isPlusOne > b.isPlusOne ? 1 : -1;
                 });
             }
             _this.guestsUpdated.next(_this.guests.slice());
@@ -241,6 +242,7 @@ var RsvpService = /** @class */ (function () {
         this.messageService = messageService;
         this.loadingService = loadingService;
         this.rsvpUpdated = new rxjs__WEBPACK_IMPORTED_MODULE_3__["Subject"]();
+        this.rsvpDeadlineUpdated = new rxjs__WEBPACK_IMPORTED_MODULE_3__["Subject"]();
     }
     RsvpService.prototype.getDetailedRsvp = function () {
         var _this = this;
@@ -266,6 +268,14 @@ var RsvpService = /** @class */ (function () {
     };
     RsvpService.prototype.rsvpUpdatedListener = function () {
         return this.rsvpUpdated.asObservable();
+    };
+    RsvpService.prototype.getRsvpDeadline = function () {
+        var _this = this;
+        this.http.get('http://localhost:3000/api/rsvp/deadline')
+            .subscribe(function (response) {
+            _this.rsvpDeadline = response.rsvpDeadline;
+            _this.rsvpDeadlineUpdated.next(_this.rsvpDeadline);
+        });
     };
     RsvpService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])({
@@ -361,7 +371,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\r\n  <h1>Guests for {{ user }}</h1>\r\n  <div *ngFor=\"let guest of guests\">\r\n    <label>First Name:</label>\r\n    <input type=\"text\" [(ngModel)]=\"guest.firstName\">\r\n    <br />\r\n    <label>Last Name:</label>\r\n    <input type=\"text\" [(ngModel)]=\"guest.lastName\">\r\n    <br/>\r\n    <label>Is Plus One:</label>\r\n    <input type=\"checkbox\" [(ngModel)]=\"guest.isPlusOne\">\r\n  </div>\r\n  <button class=\"btn btn-info\" (click)=\"addGuest()\">Additional Guest +</button>\r\n  <br />\r\n  <br />\r\n  <div>\r\n    <button class=\"btn btn-info\" (click)=\"toggleHotel()\">Toggle Hotel Visibility For These Guests</button>\r\n  </div>\r\n  <p *ngIf=\"canSeeHotel\">These guests <em style=\"color: green\">CAN</em> see the hotel bloc information.</p>\r\n  <p *ngIf=\"!canSeeHotel\">These guests <em style=\"color: red\">CANNOT</em> see the hotel bloc information.</p>\r\n  <br />\r\n  <br />\r\n  <button class=\"btn btn-primary\" (click)=\"saveGuests()\">Add Guests To User</button>\r\n  <em>Clicking this button overwrites any previously saved guests for the user.</em>\r\n  <br />\r\n  <br />\r\n  <br />\r\n</div>\r\n"
+module.exports = "<div class=\"container\">\r\n  <h1>Guests for {{ user }}</h1>\r\n  <div *ngFor=\"let guest of guests\">\r\n    <label>First Name:</label>\r\n    <input type=\"text\" [(ngModel)]=\"guest.firstName\">\r\n    <br />\r\n    <label>Last Name:</label>\r\n    <input type=\"text\" [(ngModel)]=\"guest.lastName\">\r\n    <br/>\r\n    <label>Is Plus One:</label>\r\n    <input type=\"checkbox\" [(ngModel)]=\"guest.isPlusOne\">\r\n  </div>\r\n  <button class=\"btn btn-info\" (click)=\"addGuest()\">Additional Guest +</button>\r\n  <br />\r\n  <br />\r\n  <button class=\"btn btn-primary\" (click)=\"saveGuests()\">Add Guests To User</button>\r\n  <em>Clicking this button overwrites any previously saved guests for the user.</em>\r\n  <br />\r\n  <br />\r\n  <br />\r\n</div>\r\n"
 
 /***/ }),
 
@@ -397,19 +407,10 @@ var AddGuestsComponent = /** @class */ (function () {
         this.user = '';
         this.subscriptions = [];
         this.guests = [];
-        this.canSeeHotel = true;
     }
-    AddGuestsComponent.prototype.toggleHotel = function () {
-        var _this = this;
-        this.canSeeHotel = !this.canSeeHotel;
-        this.guests.forEach(function (g) {
-            g.canSeeHotel = _this.canSeeHotel;
-        });
-    };
     AddGuestsComponent.prototype.addGuest = function () {
         this.guests.push({ _id: '', firstName: '', lastName: '', isPlusOne: false,
-            isAttending: false, canSeeHotel: false,
-            hasRSVPd: false, isValid: true });
+            isAttending: false, hasRSVPd: false, isValid: true });
     };
     AddGuestsComponent.prototype.saveGuests = function () {
         this.guestService.saveGuests(this.guests);
@@ -659,12 +660,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var ngx_bootstrap_accordion__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ngx-bootstrap/accordion */ "./node_modules/ngx-bootstrap/accordion/fesm5/ngx-bootstrap-accordion.js");
 /* harmony import */ var ngx_bootstrap_alert__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ngx-bootstrap/alert */ "./node_modules/ngx-bootstrap/alert/fesm5/ngx-bootstrap-alert.js");
 /* harmony import */ var _loading_spinner_loading_spinner_component__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./loading-spinner/loading-spinner.component */ "./src/app/loading-spinner/loading-spinner.component.ts");
+/* harmony import */ var _contact_contact_component__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./contact/contact.component */ "./src/app/contact/contact.component.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -721,7 +724,8 @@ var AppModule = /** @class */ (function () {
                 _rsvp_details_guest_guest_component__WEBPACK_IMPORTED_MODULE_25__["GuestComponent"],
                 _message_message_component__WEBPACK_IMPORTED_MODULE_26__["MessageComponent"],
                 _wedding_details_wedding_details_component__WEBPACK_IMPORTED_MODULE_27__["WeddingDetailsComponent"],
-                _loading_spinner_loading_spinner_component__WEBPACK_IMPORTED_MODULE_30__["LoadingSpinnerComponent"]
+                _loading_spinner_loading_spinner_component__WEBPACK_IMPORTED_MODULE_30__["LoadingSpinnerComponent"],
+                _contact_contact_component__WEBPACK_IMPORTED_MODULE_31__["ContactComponent"]
             ],
             imports: [
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["BrowserModule"],
@@ -973,7 +977,6 @@ var AuthService = /** @class */ (function () {
         this.saveAuthData(token, expirationDate, this.userId);
         this.loadingService.setIsLoading(false);
         this.postLoginNavigation();
-        // this.router.navigate(['/rsvp-details']);
     };
     AuthService.prototype.setAuthTimer = function (duration) {
         var _this = this;
@@ -1009,8 +1012,7 @@ var AuthService = /** @class */ (function () {
         this.http.get('http://localhost:3000/api/rsvp')
             .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["take"])(1))
             .subscribe(function (response) {
-            console.log(response.detailedRsvp);
-            if (response.detailedRsvp) {
+            if (response.detailedRsvp && response.detailedRsvp.rsvp) {
                 _this.router.navigate(['/wedding-details']);
             }
             else {
@@ -1172,6 +1174,90 @@ var CeremonyDetailsComponent = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "./src/app/contact/contact.component.css":
+/*!***********************************************!*\
+  !*** ./src/app/contact/contact.component.css ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL2NvbnRhY3QvY29udGFjdC5jb21wb25lbnQuY3NzIn0= */"
+
+/***/ }),
+
+/***/ "./src/app/contact/contact.component.html":
+/*!************************************************!*\
+  !*** ./src/app/contact/contact.component.html ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"row\">\n  <div class=\"col-sm-4\"></div>\n  <div class=\"col-sm-4\">\n    <form (ngSubmit)=\"onSubmit()\">\n      <label for=\"email\">Your Email Address:</label>\n      <br />\n      <input name=\"email\" type=\"email\" email\n      id=\"email\" [(ngModel)]=\"userEmail\"\n      #email=\"ngModel\" required>\n      <div *ngIf=\"email.invalid && (email.dirty || email.touched)\" class=\"sixty alert alert-danger\">\n        <div *ngIf=\"email?.errors.required\">Email is required.</div>\n        <div *ngIf=\"email?.errors.email\">Must be a valid email address.</div>\n      </div>\n      <br /><br />\n      <label for=\"emailBody\">Message:</label>\n      <br />\n      <textarea class=\"sixty\" name=\"emailBody\" id=\"emailBody\" [(ngModel)]=\"emailBody\" placeholder=\"Message\"></textarea>\n      <div>\n        <br />\n        <button class=\"btn\" type=\"submit\" [disabled]=\"email.invalid || !emailBody || isLoading\">Submit</button>\n        <app-message></app-message>\n        <div *ngIf=\"isLoading\">\n          <br />\n          <app-loading-spinner></app-loading-spinner>\n        </div>\n      </div>\n    </form>\n  </div>\n</div>"
+
+/***/ }),
+
+/***/ "./src/app/contact/contact.component.ts":
+/*!**********************************************!*\
+  !*** ./src/app/contact/contact.component.ts ***!
+  \**********************************************/
+/*! exports provided: ContactComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ContactComponent", function() { return ContactComponent; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _services_rsvp_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../_services/rsvp.service */ "./src/app/_services/rsvp.service.ts");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+var ContactComponent = /** @class */ (function () {
+    function ContactComponent(rsvpService) {
+        this.rsvpService = rsvpService;
+        this.subscriptions = [];
+        this.isLoading = false;
+    }
+    ContactComponent.prototype.onSubmit = function () {
+        if (this.email && this.emailBody) {
+            this.isLoading = true;
+        }
+    };
+    ContactComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.rsvpService.getDetailedRsvp();
+        this.subscriptions.push(this.rsvpService.rsvpUpdatedListener().subscribe(function (userRsvp) {
+            _this.email = userRsvp.email;
+        }));
+    };
+    ContactComponent.prototype.ngOnDestroy = function () {
+        this.unsubscribe();
+    };
+    ContactComponent.prototype.unsubscribe = function () {
+        this.subscriptions.forEach(function (s) { return s.unsubscribe(); });
+    };
+    ContactComponent = __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
+            selector: 'app-contact',
+            template: __webpack_require__(/*! ./contact.component.html */ "./src/app/contact/contact.component.html"),
+            styles: [__webpack_require__(/*! ./contact.component.css */ "./src/app/contact/contact.component.css")]
+        }),
+        __metadata("design:paramtypes", [_services_rsvp_service__WEBPACK_IMPORTED_MODULE_1__["RsvpService"]])
+    ], ContactComponent);
+    return ContactComponent;
+}());
+
+
+
+/***/ }),
+
 /***/ "./src/app/countdown/countdown.component.css":
 /*!***************************************************!*\
   !*** ./src/app/countdown/countdown.component.css ***!
@@ -1190,7 +1276,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"countdown\">\r\n    <div class=\"row\">\r\n      <div class=\"col-md-8 col-md-offset-2 text-center animate-box\">\r\n        <p class=\"countdown\">\r\n          <span>{{this.days}} d</span>\r\n          <span>{{this.hours}} h</span>\r\n          <span>{{this.minutes}} m</span>\r\n          <span>{{this.seconds}} s</span>\r\n        </p>\r\n      </div>\r\n    </div>\r\n  </div>"
+module.exports = "<div id=\"countdown\">\r\n    <div class=\"row\">\r\n      <div class=\"col-xs-8 col-xs-offset-2 text-center animate-box\">\r\n        <p class=\"countdown\">\r\n          <span>{{this.days}} d</span>\r\n          <span>{{this.hours}} h</span>\r\n          <span>{{this.minutes}} m</span>\r\n          <span>{{this.seconds}} s</span>\r\n        </p>\r\n      </div>\r\n    </div>\r\n  </div>"
 
 /***/ }),
 
@@ -1266,7 +1352,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<script src=\"../../assets/js/custom.js\"></script>\r\n<div id=\"couple\" class=\"section-gray\">\r\n  <div class=\"container\">\r\n    <div class=\"row row-bottom-padded-md animate-box\" [@scrollAnimation]=\"state\">\r\n      <div class=\"col-md-6 col-md-offset-3 text-center\">\r\n        <div class=\"col-md-5 col-sm-5 col-xs-5 nopadding\">\r\n          <img src=\"/assets/img/nima_smaller.jpg\" class=\"img-responsive\">\r\n          <h3>Poornima Patel</h3>\r\n        </div>\r\n        <div class=\"col-md-2 col-sm-2 col-xs-2 nopadding\"><h2 class=\"amp-center\"><i class=\"icon-heart\"></i></h2></div>\r\n        <div class=\"col-md-5 col-sm-5 col-xs-5 nopadding\">\r\n          <img src=\"/assets/img/kevin_smaller.jpg\" class=\"img-responsive\">\r\n          <h3>Kevin Loftus</h3>\r\n        </div>\r\n      </div>\r\n    </div>\r\n    <div class=\"row animate-box\" [@scrollAnimation]=\"state\">\r\n      <div class=\"col-md-8 col-md-offset-2\">\r\n        <div class=\"col-md-12 text-center heading-section\">\r\n          <h2>Are Getting Married</h2>\r\n          <p><strong>August 17, 2019 &mdash; Baltimore, Maryland</strong></p>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>\r\n"
+module.exports = "<script src=\"../../assets/js/custom.js\"></script>\r\n<div id=\"couple\" class=\"section-gray\">\r\n  <div class=\"container\">\r\n    <div class=\"row row-bottom-padded-md animate-box\" [@scrollAnimation]=\"state\">\r\n      <div class=\"col-xs-8 col-xs-offset-2 text-center\">\r\n        <div class=\"col-xs-5 nopadding\">\r\n          <img src=\"/assets/img/nima_smaller.jpg\" class=\"img-responsive\">\r\n          <h3>Poornima Patel</h3>\r\n        </div>\r\n        <div class=\"col-xs-2 nopadding\"><h2 class=\"amp-center\"><i class=\"icon-heart\"></i></h2></div>\r\n        <div class=\"col-xs-5 nopadding\">\r\n          <img src=\"/assets/img/kevin_smaller.jpg\" class=\"img-responsive\">\r\n          <h3>Kevin Loftus</h3>\r\n        </div>\r\n      </div>\r\n    </div>\r\n    <div class=\"row animate-box\" [@scrollAnimation]=\"state\">\r\n      <div class=\"col-xs-8 col-xs-offset-2\">\r\n        <div class=\"col-xs-12 text-center heading-section\">\r\n          <h2>Are Getting Married</h2>\r\n          <p><strong>August 17, 2019 &mdash; Baltimore, Maryland</strong></p>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>\r\n"
 
 /***/ }),
 
@@ -1627,7 +1713,7 @@ var HomeComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".lds-heart {\r\n    display: inline-block;\r\n    position: relative;\r\n    width: 64px;\r\n    height: 64px;\r\n    -webkit-transform: rotate(45deg);\r\n            transform: rotate(45deg);\r\n    -webkit-transform-origin: 32px 32px;\r\n            transform-origin: 32px 32px;\r\n  }\r\n  .lds-heart div {\r\n    top: 23px;\r\n    left: 19px;\r\n    position: absolute;\r\n    width: 26px;\r\n    height: 26px;\r\n    background: #337ab7;\r\n    -webkit-animation: lds-heart 1.2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);\r\n            animation: lds-heart 1.2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);\r\n  }\r\n  .lds-heart div:after,\r\n  .lds-heart div:before {\r\n    content: \" \";\r\n    position: absolute;\r\n    display: block;\r\n    width: 26px;\r\n    height: 26px;\r\n    background: #337ab7;\r\n  }\r\n  .lds-heart div:before {\r\n    left: -17px;\r\n    border-radius: 50% 0 0 50%;\r\n  }\r\n  .lds-heart div:after {\r\n    top: -17px;\r\n    border-radius: 50% 50% 0 0;\r\n  }\r\n  @-webkit-keyframes lds-heart {\r\n    0% {\r\n      -webkit-transform: scale(0.95);\r\n              transform: scale(0.95);\r\n    }\r\n    5% {\r\n      -webkit-transform: scale(1.1);\r\n              transform: scale(1.1);\r\n    }\r\n    39% {\r\n      -webkit-transform: scale(0.85);\r\n              transform: scale(0.85);\r\n    }\r\n    45% {\r\n      -webkit-transform: scale(1);\r\n              transform: scale(1);\r\n    }\r\n    60% {\r\n      -webkit-transform: scale(0.95);\r\n              transform: scale(0.95);\r\n    }\r\n    100% {\r\n      -webkit-transform: scale(0.9);\r\n              transform: scale(0.9);\r\n    }\r\n  }\r\n  @keyframes lds-heart {\r\n    0% {\r\n      -webkit-transform: scale(0.95);\r\n              transform: scale(0.95);\r\n    }\r\n    5% {\r\n      -webkit-transform: scale(1.1);\r\n              transform: scale(1.1);\r\n    }\r\n    39% {\r\n      -webkit-transform: scale(0.85);\r\n              transform: scale(0.85);\r\n    }\r\n    45% {\r\n      -webkit-transform: scale(1);\r\n              transform: scale(1);\r\n    }\r\n    60% {\r\n      -webkit-transform: scale(0.95);\r\n              transform: scale(0.95);\r\n    }\r\n    100% {\r\n      -webkit-transform: scale(0.9);\r\n              transform: scale(0.9);\r\n    }\r\n  }\r\n  \r\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvbG9hZGluZy1zcGlubmVyL2xvYWRpbmctc3Bpbm5lci5jb21wb25lbnQuY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0lBQ0kscUJBQXFCO0lBQ3JCLGtCQUFrQjtJQUNsQixXQUFXO0lBQ1gsWUFBWTtJQUNaLGdDQUF3QjtZQUF4Qix3QkFBd0I7SUFDeEIsbUNBQTJCO1lBQTNCLDJCQUEyQjtFQUM3QjtFQUNBO0lBQ0UsU0FBUztJQUNULFVBQVU7SUFDVixrQkFBa0I7SUFDbEIsV0FBVztJQUNYLFlBQVk7SUFDWixtQkFBbUI7SUFDbkIsOEVBQXNFO1lBQXRFLHNFQUFzRTtFQUN4RTtFQUNBOztJQUVFLFlBQVk7SUFDWixrQkFBa0I7SUFDbEIsY0FBYztJQUNkLFdBQVc7SUFDWCxZQUFZO0lBQ1osbUJBQW1CO0VBQ3JCO0VBQ0E7SUFDRSxXQUFXO0lBQ1gsMEJBQTBCO0VBQzVCO0VBQ0E7SUFDRSxVQUFVO0lBQ1YsMEJBQTBCO0VBQzVCO0VBQ0E7SUFDRTtNQUNFLDhCQUFzQjtjQUF0QixzQkFBc0I7SUFDeEI7SUFDQTtNQUNFLDZCQUFxQjtjQUFyQixxQkFBcUI7SUFDdkI7SUFDQTtNQUNFLDhCQUFzQjtjQUF0QixzQkFBc0I7SUFDeEI7SUFDQTtNQUNFLDJCQUFtQjtjQUFuQixtQkFBbUI7SUFDckI7SUFDQTtNQUNFLDhCQUFzQjtjQUF0QixzQkFBc0I7SUFDeEI7SUFDQTtNQUNFLDZCQUFxQjtjQUFyQixxQkFBcUI7SUFDdkI7RUFDRjtFQW5CQTtJQUNFO01BQ0UsOEJBQXNCO2NBQXRCLHNCQUFzQjtJQUN4QjtJQUNBO01BQ0UsNkJBQXFCO2NBQXJCLHFCQUFxQjtJQUN2QjtJQUNBO01BQ0UsOEJBQXNCO2NBQXRCLHNCQUFzQjtJQUN4QjtJQUNBO01BQ0UsMkJBQW1CO2NBQW5CLG1CQUFtQjtJQUNyQjtJQUNBO01BQ0UsOEJBQXNCO2NBQXRCLHNCQUFzQjtJQUN4QjtJQUNBO01BQ0UsNkJBQXFCO2NBQXJCLHFCQUFxQjtJQUN2QjtFQUNGIiwiZmlsZSI6InNyYy9hcHAvbG9hZGluZy1zcGlubmVyL2xvYWRpbmctc3Bpbm5lci5jb21wb25lbnQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmxkcy1oZWFydCB7XHJcbiAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XHJcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XHJcbiAgICB3aWR0aDogNjRweDtcclxuICAgIGhlaWdodDogNjRweDtcclxuICAgIHRyYW5zZm9ybTogcm90YXRlKDQ1ZGVnKTtcclxuICAgIHRyYW5zZm9ybS1vcmlnaW46IDMycHggMzJweDtcclxuICB9XHJcbiAgLmxkcy1oZWFydCBkaXYge1xyXG4gICAgdG9wOiAyM3B4O1xyXG4gICAgbGVmdDogMTlweDtcclxuICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcclxuICAgIHdpZHRoOiAyNnB4O1xyXG4gICAgaGVpZ2h0OiAyNnB4O1xyXG4gICAgYmFja2dyb3VuZDogIzMzN2FiNztcclxuICAgIGFuaW1hdGlvbjogbGRzLWhlYXJ0IDEuMnMgaW5maW5pdGUgY3ViaWMtYmV6aWVyKDAuMjE1LCAwLjYxLCAwLjM1NSwgMSk7XHJcbiAgfVxyXG4gIC5sZHMtaGVhcnQgZGl2OmFmdGVyLFxyXG4gIC5sZHMtaGVhcnQgZGl2OmJlZm9yZSB7XHJcbiAgICBjb250ZW50OiBcIiBcIjtcclxuICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcclxuICAgIGRpc3BsYXk6IGJsb2NrO1xyXG4gICAgd2lkdGg6IDI2cHg7XHJcbiAgICBoZWlnaHQ6IDI2cHg7XHJcbiAgICBiYWNrZ3JvdW5kOiAjMzM3YWI3O1xyXG4gIH1cclxuICAubGRzLWhlYXJ0IGRpdjpiZWZvcmUge1xyXG4gICAgbGVmdDogLTE3cHg7XHJcbiAgICBib3JkZXItcmFkaXVzOiA1MCUgMCAwIDUwJTtcclxuICB9XHJcbiAgLmxkcy1oZWFydCBkaXY6YWZ0ZXIge1xyXG4gICAgdG9wOiAtMTdweDtcclxuICAgIGJvcmRlci1yYWRpdXM6IDUwJSA1MCUgMCAwO1xyXG4gIH1cclxuICBAa2V5ZnJhbWVzIGxkcy1oZWFydCB7XHJcbiAgICAwJSB7XHJcbiAgICAgIHRyYW5zZm9ybTogc2NhbGUoMC45NSk7XHJcbiAgICB9XHJcbiAgICA1JSB7XHJcbiAgICAgIHRyYW5zZm9ybTogc2NhbGUoMS4xKTtcclxuICAgIH1cclxuICAgIDM5JSB7XHJcbiAgICAgIHRyYW5zZm9ybTogc2NhbGUoMC44NSk7XHJcbiAgICB9XHJcbiAgICA0NSUge1xyXG4gICAgICB0cmFuc2Zvcm06IHNjYWxlKDEpO1xyXG4gICAgfVxyXG4gICAgNjAlIHtcclxuICAgICAgdHJhbnNmb3JtOiBzY2FsZSgwLjk1KTtcclxuICAgIH1cclxuICAgIDEwMCUge1xyXG4gICAgICB0cmFuc2Zvcm06IHNjYWxlKDAuOSk7XHJcbiAgICB9XHJcbiAgfVxyXG4gICJdfQ== */"
+module.exports = ".lds-heart {\r\n    display: inline-block;\r\n    position: relative;\r\n    width: 64px;\r\n    height: 64px;\r\n    -webkit-transform: rotate(45deg);\r\n            transform: rotate(45deg);\r\n    -webkit-transform-origin: 32px 32px;\r\n            transform-origin: 32px 32px;\r\n  }\r\n  .lds-heart div {\r\n    top: 23px;\r\n    left: 19px;\r\n    position: absolute;\r\n    width: 26px;\r\n    height: 26px;\r\n    background: #2DA58A;\r\n    -webkit-animation: lds-heart 1.2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);\r\n            animation: lds-heart 1.2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);\r\n  }\r\n  .lds-heart div:after,\r\n  .lds-heart div:before {\r\n    content: \" \";\r\n    position: absolute;\r\n    display: block;\r\n    width: 26px;\r\n    height: 26px;\r\n    background: #2DA58A;\r\n  }\r\n  .lds-heart div:before {\r\n    left: -17px;\r\n    border-radius: 50% 0 0 50%;\r\n  }\r\n  .lds-heart div:after {\r\n    top: -17px;\r\n    border-radius: 50% 50% 0 0;\r\n  }\r\n  @-webkit-keyframes lds-heart {\r\n    0% {\r\n      -webkit-transform: scale(0.95);\r\n              transform: scale(0.95);\r\n    }\r\n    5% {\r\n      -webkit-transform: scale(1.1);\r\n              transform: scale(1.1);\r\n    }\r\n    39% {\r\n      -webkit-transform: scale(0.85);\r\n              transform: scale(0.85);\r\n    }\r\n    45% {\r\n      -webkit-transform: scale(1);\r\n              transform: scale(1);\r\n    }\r\n    60% {\r\n      -webkit-transform: scale(0.95);\r\n              transform: scale(0.95);\r\n    }\r\n    100% {\r\n      -webkit-transform: scale(0.9);\r\n              transform: scale(0.9);\r\n    }\r\n  }\r\n  @keyframes lds-heart {\r\n    0% {\r\n      -webkit-transform: scale(0.95);\r\n              transform: scale(0.95);\r\n    }\r\n    5% {\r\n      -webkit-transform: scale(1.1);\r\n              transform: scale(1.1);\r\n    }\r\n    39% {\r\n      -webkit-transform: scale(0.85);\r\n              transform: scale(0.85);\r\n    }\r\n    45% {\r\n      -webkit-transform: scale(1);\r\n              transform: scale(1);\r\n    }\r\n    60% {\r\n      -webkit-transform: scale(0.95);\r\n              transform: scale(0.95);\r\n    }\r\n    100% {\r\n      -webkit-transform: scale(0.9);\r\n              transform: scale(0.9);\r\n    }\r\n  }\r\n  \r\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvbG9hZGluZy1zcGlubmVyL2xvYWRpbmctc3Bpbm5lci5jb21wb25lbnQuY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0lBQ0kscUJBQXFCO0lBQ3JCLGtCQUFrQjtJQUNsQixXQUFXO0lBQ1gsWUFBWTtJQUNaLGdDQUF3QjtZQUF4Qix3QkFBd0I7SUFDeEIsbUNBQTJCO1lBQTNCLDJCQUEyQjtFQUM3QjtFQUNBO0lBQ0UsU0FBUztJQUNULFVBQVU7SUFDVixrQkFBa0I7SUFDbEIsV0FBVztJQUNYLFlBQVk7SUFDWixtQkFBbUI7SUFDbkIsOEVBQXNFO1lBQXRFLHNFQUFzRTtFQUN4RTtFQUNBOztJQUVFLFlBQVk7SUFDWixrQkFBa0I7SUFDbEIsY0FBYztJQUNkLFdBQVc7SUFDWCxZQUFZO0lBQ1osbUJBQW1CO0VBQ3JCO0VBQ0E7SUFDRSxXQUFXO0lBQ1gsMEJBQTBCO0VBQzVCO0VBQ0E7SUFDRSxVQUFVO0lBQ1YsMEJBQTBCO0VBQzVCO0VBQ0E7SUFDRTtNQUNFLDhCQUFzQjtjQUF0QixzQkFBc0I7SUFDeEI7SUFDQTtNQUNFLDZCQUFxQjtjQUFyQixxQkFBcUI7SUFDdkI7SUFDQTtNQUNFLDhCQUFzQjtjQUF0QixzQkFBc0I7SUFDeEI7SUFDQTtNQUNFLDJCQUFtQjtjQUFuQixtQkFBbUI7SUFDckI7SUFDQTtNQUNFLDhCQUFzQjtjQUF0QixzQkFBc0I7SUFDeEI7SUFDQTtNQUNFLDZCQUFxQjtjQUFyQixxQkFBcUI7SUFDdkI7RUFDRjtFQW5CQTtJQUNFO01BQ0UsOEJBQXNCO2NBQXRCLHNCQUFzQjtJQUN4QjtJQUNBO01BQ0UsNkJBQXFCO2NBQXJCLHFCQUFxQjtJQUN2QjtJQUNBO01BQ0UsOEJBQXNCO2NBQXRCLHNCQUFzQjtJQUN4QjtJQUNBO01BQ0UsMkJBQW1CO2NBQW5CLG1CQUFtQjtJQUNyQjtJQUNBO01BQ0UsOEJBQXNCO2NBQXRCLHNCQUFzQjtJQUN4QjtJQUNBO01BQ0UsNkJBQXFCO2NBQXJCLHFCQUFxQjtJQUN2QjtFQUNGIiwiZmlsZSI6InNyYy9hcHAvbG9hZGluZy1zcGlubmVyL2xvYWRpbmctc3Bpbm5lci5jb21wb25lbnQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmxkcy1oZWFydCB7XHJcbiAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XHJcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XHJcbiAgICB3aWR0aDogNjRweDtcclxuICAgIGhlaWdodDogNjRweDtcclxuICAgIHRyYW5zZm9ybTogcm90YXRlKDQ1ZGVnKTtcclxuICAgIHRyYW5zZm9ybS1vcmlnaW46IDMycHggMzJweDtcclxuICB9XHJcbiAgLmxkcy1oZWFydCBkaXYge1xyXG4gICAgdG9wOiAyM3B4O1xyXG4gICAgbGVmdDogMTlweDtcclxuICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcclxuICAgIHdpZHRoOiAyNnB4O1xyXG4gICAgaGVpZ2h0OiAyNnB4O1xyXG4gICAgYmFja2dyb3VuZDogIzJEQTU4QTtcclxuICAgIGFuaW1hdGlvbjogbGRzLWhlYXJ0IDEuMnMgaW5maW5pdGUgY3ViaWMtYmV6aWVyKDAuMjE1LCAwLjYxLCAwLjM1NSwgMSk7XHJcbiAgfVxyXG4gIC5sZHMtaGVhcnQgZGl2OmFmdGVyLFxyXG4gIC5sZHMtaGVhcnQgZGl2OmJlZm9yZSB7XHJcbiAgICBjb250ZW50OiBcIiBcIjtcclxuICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcclxuICAgIGRpc3BsYXk6IGJsb2NrO1xyXG4gICAgd2lkdGg6IDI2cHg7XHJcbiAgICBoZWlnaHQ6IDI2cHg7XHJcbiAgICBiYWNrZ3JvdW5kOiAjMkRBNThBO1xyXG4gIH1cclxuICAubGRzLWhlYXJ0IGRpdjpiZWZvcmUge1xyXG4gICAgbGVmdDogLTE3cHg7XHJcbiAgICBib3JkZXItcmFkaXVzOiA1MCUgMCAwIDUwJTtcclxuICB9XHJcbiAgLmxkcy1oZWFydCBkaXY6YWZ0ZXIge1xyXG4gICAgdG9wOiAtMTdweDtcclxuICAgIGJvcmRlci1yYWRpdXM6IDUwJSA1MCUgMCAwO1xyXG4gIH1cclxuICBAa2V5ZnJhbWVzIGxkcy1oZWFydCB7XHJcbiAgICAwJSB7XHJcbiAgICAgIHRyYW5zZm9ybTogc2NhbGUoMC45NSk7XHJcbiAgICB9XHJcbiAgICA1JSB7XHJcbiAgICAgIHRyYW5zZm9ybTogc2NhbGUoMS4xKTtcclxuICAgIH1cclxuICAgIDM5JSB7XHJcbiAgICAgIHRyYW5zZm9ybTogc2NhbGUoMC44NSk7XHJcbiAgICB9XHJcbiAgICA0NSUge1xyXG4gICAgICB0cmFuc2Zvcm06IHNjYWxlKDEpO1xyXG4gICAgfVxyXG4gICAgNjAlIHtcclxuICAgICAgdHJhbnNmb3JtOiBzY2FsZSgwLjk1KTtcclxuICAgIH1cclxuICAgIDEwMCUge1xyXG4gICAgICB0cmFuc2Zvcm06IHNjYWxlKDAuOSk7XHJcbiAgICB9XHJcbiAgfVxyXG4gICJdfQ== */"
 
 /***/ }),
 
@@ -1701,7 +1787,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<alert *ngIf=\"message\" [attr.type]=\"message.type\">{{message.message}}</alert>"
+module.exports = "<alert *ngIf=\"message\" [type]=\"message.type\">{{message.message}}</alert>"
 
 /***/ }),
 
@@ -1738,7 +1824,10 @@ var MessageComponent = /** @class */ (function () {
         this.subscriptions.push(this.messageService.getMessageListener().subscribe(function (m) {
             if (m) {
                 console.log("message received! *" + m.type + "* " + m.message);
-                _this.message = m;
+                _this.message = {
+                    message: m.message,
+                    type: m.type
+                };
             }
             else {
                 _this.message = null;
@@ -1787,7 +1876,7 @@ module.exports = ".pls-center {\r\n    margin-top: 10px;\r\n    position: absolu
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<header>\r\n  <div class=\"container\">\r\n    <div>\r\n      <a class=\"js-nav-toggle nav-toggle dark\" (click)=\"toggleNavbar()\"><i></i></a>\r\n      <h1 id=\"logo\"><a class=\"brand\" routerLink=\"/home\">P &amp; K</a></h1>\r\n      <nav id=\"menu-wrap\" role=\"navigation\" [ngClass]=\"{ 'show': navbarOpen }\">\r\n        <ul class=\"sf-menu\" id=\"primary-menu\">\r\n          <li><a routerLink=\"/home\">Home</a></li>\r\n          <li><a routerLink=\"/ourStory\">Our Story</a></li>\r\n          <li><a routerLink=\"/whenwhere\">When &amp; Where</a></li>\r\n          <li><a routerLink=\"/ceremony\">Ceremony</a></li>\r\n          <li *ngIf=\"!userIsAuthenticated\"><a routerLink=\"/rsvp\">RSVP</a></li>\r\n          <li *ngIf=\"userIsAuthenticated\"><a routerLink=\"/rsvp-details\">RSVP</a></li>\r\n          <li *ngIf=\"userIsAuthenticated\"><a routerLink=\"/wedding-details\">Details</a></li>\r\n          <li *ngIf=\"userIsAuthenticated\"><a class=\"pointer\" (click)=\"logout()\">Logout</a></li>\r\n        </ul>\r\n      </nav>\r\n    </div>\r\n  </div>\r\n</header>\r\n"
+module.exports = "<header>\r\n  <div class=\"container\">\r\n    <div>\r\n      <a class=\"js-nav-toggle nav-toggle dark\" (click)=\"toggleNavbar()\"><i></i></a>\r\n      <h1 id=\"logo\"><a class=\"brand\" routerLink=\"/home\">P &amp; K</a></h1>\r\n      <nav id=\"menu-wrap\" role=\"navigation\" [ngClass]=\"{ 'show': navbarOpen }\">\r\n        <ul class=\"sf-menu\" id=\"primary-menu\">\r\n          <li><a routerLink=\"/home\">Home</a></li>\r\n          <li><a routerLink=\"/ourStory\">Our Story</a></li>\r\n          <li><a routerLink=\"/whenwhere\">When &amp; Where</a></li>\r\n          <li><a routerLink=\"/ceremony\">Ceremony</a></li>\r\n          <li *ngIf=\"!userIsAuthenticated\"><a routerLink=\"/rsvp\">RSVP</a></li>\r\n          <li *ngIf=\"userIsAuthenticated && !userHasRsvpdBefore\"><a routerLink=\"/rsvp-details\">RSVP</a></li>\r\n          <li *ngIf=\"userIsAuthenticated\"><a routerLink=\"/wedding-details\">Details</a></li>\r\n          <li *ngIf=\"userIsAuthenticated\"><a class=\"pointer\" (click)=\"logout()\">Logout</a></li>\r\n        </ul>\r\n      </nav>\r\n    </div>\r\n  </div>\r\n</header>\r\n"
 
 /***/ }),
 
@@ -1804,6 +1893,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
 /* harmony import */ var _auth_auth_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../auth/auth.service */ "./src/app/auth/auth.service.ts");
+/* harmony import */ var _services_rsvp_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../_services/rsvp.service */ "./src/app/_services/rsvp.service.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1816,11 +1906,13 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
+
 var NavComponent = /** @class */ (function () {
-    function NavComponent(authService, router) {
+    function NavComponent(authService, router, rsvpService) {
         var _this = this;
         this.authService = authService;
         this.router = router;
+        this.rsvpService = rsvpService;
         this.isHomeSelected = false;
         this.navbarOpen = false;
         this.userIsAuthenticated = false;
@@ -1847,6 +1939,10 @@ var NavComponent = /** @class */ (function () {
             .subscribe(function (isAuthenticated) {
             _this.userIsAuthenticated = isAuthenticated;
         }));
+        this.rsvpService.getDetailedRsvp();
+        this.subscriptions.push(this.rsvpService.rsvpUpdatedListener().subscribe(function (savedRsvp) {
+            (savedRsvp && savedRsvp.rsvp) ? _this.userHasRsvpdBefore = true : _this.userHasRsvpdBefore = false;
+        }));
     };
     NavComponent.prototype.ngOnDestroy = function () {
         this.unsubscribe();
@@ -1862,7 +1958,7 @@ var NavComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./nav.component.html */ "./src/app/nav/nav.component.html"),
             styles: [__webpack_require__(/*! ./nav.component.css */ "./src/app/nav/nav.component.css")]
         }),
-        __metadata("design:paramtypes", [_auth_auth_service__WEBPACK_IMPORTED_MODULE_2__["AuthService"], _angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"]])
+        __metadata("design:paramtypes", [_auth_auth_service__WEBPACK_IMPORTED_MODULE_2__["AuthService"], _angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"], _services_rsvp_service__WEBPACK_IMPORTED_MODULE_3__["RsvpService"]])
     ], NavComponent);
     return NavComponent;
 }());
@@ -1944,7 +2040,6 @@ var GuestComponent = /** @class */ (function () {
             lastName: this.lastName,
             isPlusOne: this.details.isPlusOne,
             isAttending: this.isAttending,
-            canSeeHotel: this.details.canSeeHotel,
             hasRSVPd: this.details.hasRSVPd,
             isValid: this.isValid
         });
@@ -1994,7 +2089,7 @@ var GuestComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".horizontalSpacer {\r\n  width: 50%;\r\n}\r\n\r\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvcnN2cC1kZXRhaWxzL3JzdnAtZGV0YWlscy5jb21wb25lbnQuY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0UsVUFBVTtBQUNaIiwiZmlsZSI6InNyYy9hcHAvcnN2cC1kZXRhaWxzL3JzdnAtZGV0YWlscy5jb21wb25lbnQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLmhvcml6b250YWxTcGFjZXIge1xyXG4gIHdpZHRoOiA1MCU7XHJcbn1cclxuIl19 */"
+module.exports = ".horizontalSpacer {\r\n  width: 50%;\r\n}\r\n\r\n.submitBtn {\r\n  background-color: #2DA58A;\r\n  color: white;\r\n}\r\n\r\n#email {\r\n  text-align: center;\r\n}\r\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvcnN2cC1kZXRhaWxzL3JzdnAtZGV0YWlscy5jb21wb25lbnQuY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0UsVUFBVTtBQUNaOztBQUVBO0VBQ0UseUJBQXlCO0VBQ3pCLFlBQVk7QUFDZDs7QUFFQTtFQUNFLGtCQUFrQjtBQUNwQiIsImZpbGUiOiJzcmMvYXBwL3JzdnAtZGV0YWlscy9yc3ZwLWRldGFpbHMuY29tcG9uZW50LmNzcyIsInNvdXJjZXNDb250ZW50IjpbIi5ob3Jpem9udGFsU3BhY2VyIHtcclxuICB3aWR0aDogNTAlO1xyXG59XHJcblxyXG4uc3VibWl0QnRuIHtcclxuICBiYWNrZ3JvdW5kLWNvbG9yOiAjMkRBNThBO1xyXG4gIGNvbG9yOiB3aGl0ZTtcclxufVxyXG5cclxuI2VtYWlsIHtcclxuICB0ZXh0LWFsaWduOiBjZW50ZXI7XHJcbn0iXX0= */"
 
 /***/ }),
 
@@ -2005,7 +2100,7 @@ module.exports = ".horizontalSpacer {\r\n  width: 50%;\r\n}\r\n\r\n/*# sourceMap
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div *ngIf=\"guests && guests.length > 0\" class=\"section-gray text-center\">\r\n  <br /><br />\r\n  <h1>RSVP - Details</h1>\r\n    <div class=\"container\">\r\n      <p>Please let us know who will be attending:</p>\r\n      <div *ngFor=\"let guest of guests\" class=\"row\">\r\n        <div class=\"col-sm-2\"></div>\r\n        <div class=\"col-sm-8\">\r\n          <app-guest [details]=\"guest\" (guestUpdated)=\"updateGuest($event)\"></app-guest>\r\n        </div>\r\n        <hr class=\"horizontalSpacer\">\r\n      </div>\r\n      <div class=\"row\">\r\n        <div class=\"col-sm-4\"></div>\r\n        <div class=\"col-sm-4\">\r\n          <form (ngSubmit)=\"onSubmit()\">\r\n            <label for=\"email\">Your Email Address:</label>\r\n            <br />\r\n            <input name=\"email\" type=\"email\" email\r\n            id=\"email\" [(ngModel)]=\"userEmail\"\r\n            #email=\"ngModel\" required>\r\n            <div *ngIf=\"email.invalid && (email.dirty || email.touched)\" class=\"sixty alert alert-danger\">\r\n              <div *ngIf=\"email?.errors.required\">Email is required.</div>\r\n              <div *ngIf=\"email?.errors.email\">Must be a valid email address.</div>\r\n            </div>\r\n            <br /><br />\r\n            <label for=\"comments\">Additional comments:</label>\r\n            <br />\r\n            <textarea class=\"sixty\" name=\"comments\" id=\"comments\" [(ngModel)]=\"userComments\" placeholder=\"Additional comments\"></textarea>\r\n            <div>\r\n              <br />\r\n              <button class=\"btn\" type=\"submit\" [disabled]=\"email.invalid || isLoading\">Submit RSVP</button>\r\n              <app-message></app-message>\r\n              <app-loading-spinner *ngIf=\"isLoading\"></app-loading-spinner>\r\n            </div>\r\n          </form>\r\n        </div>\r\n      </div>\r\n  </div>\r\n  <br /><br />\r\n</div>\r\n<div *ngIf=\"!guests || guests.length === 0\" class=\"section-gray text-center\">\r\n  <p>An error has occurred. Please contact Kevin or Poornima.</p>\r\n</div>\r\n"
+module.exports = "<div *ngIf=\"guests && guests.length > 0\" class=\"section-gray text-center\">\r\n  <br /><br />\r\n  <h1>RSVP - Details</h1>\r\n    <div class=\"container\">\r\n      <p>Please let us know who will be attending:</p>\r\n      <div *ngFor=\"let guest of guests\" class=\"row\">\r\n        <div class=\"col-sm-2\"></div>\r\n        <div class=\"col-sm-8\">\r\n          <app-guest [details]=\"guest\" (guestUpdated)=\"updateGuest($event)\"></app-guest>\r\n        </div>\r\n        <hr class=\"horizontalSpacer\">\r\n      </div>\r\n      <div class=\"row\">\r\n        <div class=\"col-sm-8 offset-sm-2\">\r\n          <form (ngSubmit)=\"onSubmit()\">\r\n            <label for=\"email\">Your Email Address:</label>\r\n            <br />\r\n            <input class=\"sixty\" name=\"email\" type=\"email\" email\r\n            id=\"email\" [(ngModel)]=\"userEmail\"\r\n            #email=\"ngModel\" required>\r\n            <div *ngIf=\"email.invalid && (email.dirty || email.touched)\" class=\"sixty alert alert-danger\">\r\n              <div *ngIf=\"email?.errors.required\">Email is required.</div>\r\n              <div *ngIf=\"email?.errors.email\">Must be a valid email address.</div>\r\n            </div>\r\n            <br /><br />\r\n            <label for=\"comments\">Additional comments:</label>\r\n            <br />\r\n            <textarea class=\"sixty\" name=\"comments\" id=\"comments\" [(ngModel)]=\"userComments\"></textarea>\r\n            <div>\r\n              <br />\r\n              <button class=\"btn submitBtn\" type=\"submit\" [disabled]=\"email.invalid || isLoading\">Submit RSVP</button>\r\n              <app-message></app-message>\r\n              <div *ngIf=\"isLoading\">\r\n                <br />\r\n                <app-loading-spinner></app-loading-spinner>\r\n              </div>\r\n            </div>\r\n          </form>\r\n        </div>\r\n      </div>\r\n  </div>\r\n  <br /><br />\r\n</div>\r\n<div *ngIf=\"!guests || guests.length === 0\" class=\"section-gray text-center\">\r\n  <p>An error has occurred. Please contact Kevin or Poornima.</p>\r\n</div>\r\n"
 
 /***/ }),
 
@@ -2072,7 +2167,7 @@ var RsvpDetailsComponent = /** @class */ (function () {
             if (this.guests[i].isAttending && this.guests[i].isPlusOne && !this.guests[i].isValid) {
                 this.guests[i].firstName = '';
                 this.isValid = false;
-                this.messageService.setMessage('First and last names are required for Plus Ones.', "danger");
+                this.messageService.setMessage('First and last names are required for attending Plus Ones.', 'danger');
                 return;
             }
         }
@@ -2090,10 +2185,12 @@ var RsvpDetailsComponent = /** @class */ (function () {
             _this.guests = updatedGuests;
         }));
         this.rsvpService.getDetailedRsvp();
-        this.rsvpService.rsvpUpdatedListener().subscribe(function (updatedRsvp) {
-            _this.userEmail = updatedRsvp.email;
-            _this.userComments = updatedRsvp.rsvp.comments;
-        });
+        this.subscriptions.push(this.rsvpService.rsvpUpdatedListener().subscribe(function (updatedRsvp) {
+            if (updatedRsvp && updatedRsvp.rsvp && updatedRsvp.email) {
+                _this.userEmail = updatedRsvp.email;
+                _this.userComments = decodeURI(updatedRsvp.rsvp.comments);
+            }
+        }));
         this.subscriptions.push(this.loadingService.getIsLoadingListener().subscribe(function (b) {
             _this.isLoading = b;
         }));
@@ -2143,7 +2240,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"section-gray text-center\">\r\n  <div class=\"container\">\r\n    <main class=\"responsive-main\">\r\n      <hr class=\"horizontalSpacer\">\r\n      <h1>RSVP</h1>\r\n      <div *ngIf=\"isReleased\">\r\n        <p>Please enter the login information provided in your invitation. If you did not receive login information, please contact Poornima or Kevin.</p>\r\n        <form (submit)=\"onLogin(loginForm)\" #loginForm=\"ngForm\">\r\n          <input name=\"username\"\r\n          ngModel\r\n          #usernameInput=\"ngModel\"\r\n          type=\"username\"\r\n          placeholder=\"Username\"\r\n          required\r\n          username\r\n          (focus)=\"clearMessage()\">\r\n          <br />\r\n          <input name=\"password\"\r\n          ngModel\r\n          #passwordInput=\"ngModel\"\r\n          type=\"password\"\r\n          placeholder=\"Password\"\r\n          required\r\n          password\r\n          (focus)=\"clearMessage()\">\r\n          <br /><br />\r\n          <app-message></app-message>\r\n          <button type=\"submit\" class=\"btn btn-primary\" *ngIf=\"!isLoading\">Submit</button>\r\n          <app-loading-spinner *ngIf=\"isLoading\"></app-loading-spinner>\r\n        </form>\r\n        <hr class=\"horizontalSpacer\">\r\n      </div>\r\n      <div *ngIf=\"!isReleased\">\r\n        <br />\r\n        <p>Coming soon!</p>\r\n        <br />\r\n        <hr class=\"horizontalSpacer\">\r\n      </div>\r\n  </main>\r\n  </div>\r\n</div>\r\n"
+module.exports = "<div class=\"section-gray text-center\">\r\n  <div class=\"container\">\r\n    <main class=\"responsive-main\">\r\n      <hr class=\"horizontalSpacer\">\r\n      <h1>RSVP</h1>\r\n      <div *ngIf=\"isReleased\">\r\n        <p>Please enter the login information provided in your invitation. If you have any questions, please email us at <a href=\"mailto:loftuspatelwedding@gmail.com\">loftuspatelwedding@gmail.com</a>.</p>\r\n        <p>Please RSVP by Monday, July 15th, 2019.</p>\r\n        <form (submit)=\"onLogin(loginForm)\" #loginForm=\"ngForm\">\r\n          <input name=\"username\"\r\n          ngModel\r\n          #usernameInput=\"ngModel\"\r\n          type=\"username\"\r\n          placeholder=\"Username\"\r\n          required\r\n          username\r\n          (focus)=\"clearMessage()\">\r\n          <br />\r\n          <input name=\"password\"\r\n          ngModel\r\n          #passwordInput=\"ngModel\"\r\n          type=\"password\"\r\n          placeholder=\"Password\"\r\n          required\r\n          password\r\n          (focus)=\"clearMessage()\">\r\n          <br /><br />\r\n          <app-message></app-message>\r\n          <button type=\"submit\" class=\"btn btn-primary\" *ngIf=\"!isLoading\">Submit</button>\r\n          <app-loading-spinner *ngIf=\"isLoading\"></app-loading-spinner>\r\n        </form>\r\n        <hr class=\"horizontalSpacer\">\r\n      </div>\r\n      <div *ngIf=\"!isReleased\">\r\n        <br />\r\n        <p>Coming soon!</p>\r\n        <br />\r\n        <hr class=\"horizontalSpacer\">\r\n      </div>\r\n  </main>\r\n  </div>\r\n</div>\r\n"
 
 /***/ }),
 
@@ -2319,7 +2416,7 @@ module.exports = "::ng-deep .panel-collapse {\r\n    background-color: lavender 
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"section-gray text-center\">\n  <br />\n  <div class=\"container\">\n    <main>\n      <div class=\"section-gray\">\n        <div class=\"row\">\n          <div class=\"col-6 offset-3\">\n            <h1 *ngIf=\"isAnyoneComing\">We look forward to seeing you!</h1>\n            <h1 *ngIf=\"!isAnyoneComing\">We'll be missing you!</h1>\n          </div>\n        </div>\n        <accordion>\n          <accordion-group *ngIf=\"hasRsvpd\" heading=\"Your RSVP\" [isOpen]=\"true\">\n            <div class=\"bkc\">\n              <div class=\"row\">\n                <div class=\"col-6\">\n                  <h2><u>Attending:</u></h2>\n                  <div *ngFor=\"let guest of rsvpDetails.guests\">\n                    <p *ngIf=\"guest.isAttending\">{{guest.firstName}}&nbsp;{{guest.lastName}}</p>\n                  </div>\n                </div>\n                <div class=\"col-6\">\n                  <h2><u>Not Attending:</u></h2>\n                  <div *ngFor=\"let guest of rsvpDetails.guests\">\n                    <p *ngIf=\"!guest.isAttending\">{{guest.firstName}}&nbsp;{{guest.lastName}}</p>\n                  </div>\n                </div>\n              </div>\n              <hr class=\"horizontalSpacer\" />\n              <div class=\"row\">\n                <div class=\"col-6 offset-3\">\n                  <p>Your confirmation email was sent to {{rsvpDetails.email}} on {{rsvpDetails.rsvp.dateSubmitted | date}}.</p>\n                </div>\n              </div>\n              <div class=\"row\">\n                <div class=\"col-sm-12\">\n                  <button class=\"btn btn-sm btn-link btn-block border\" (click)=\"rsvpAgain()\"><b>Edit My RSVP</b></button>\n                </div>\n              </div>\n            </div>\n          </accordion-group>\n          <accordion-group *ngIf=\"!hasRsvpd\" heading=\"RSVP\">\n            <div class=\"row\">\n              <div class=\"col-sm-12\">\n                <button class=\"btn btn-sm btn-link btn-block border\" (click)=\"rsvpAgain()\"><b>Please RSVP</b></button>\n              </div>\n            </div>\n          </accordion-group>\n          <accordion-group heading=\"Dinner\">\n            <div class=\"row\">\n              <div class=\"col-sm-2\"></div>\n              <div class=\"col-sm-8\">\n                <p>\n                  Hors d'oeuvres will be served during the cocktail hour, and a vegetarian buffet of Indian cuisine will be served during the reception. Our menu includes:\n                </p>\n              </div>\n            </div>\n            <div class=\"row\">\n              <div class=\"col-sm-4\">\n                <h2><u>Hors D'oeuvres</u></h2>\n                <ul>\n                  <li>Aam Palak Chaat</li>\n                  <li>Pani Puri</li>\n                  <li>Paneer Shashlik</li>\n                  <li>Mini Samosa</li>\n                  <li>Bhel Puri</li>\n                </ul>\n              </div>\n              <div class=\"col-sm-4\">\n                <h2><u>Entrees</u></h2>\n                <ul>\n                  <li>Dal Makhani</li>\n                  <li>Baingan Bharta</li>\n                  <li>Vegetable Biryani</li>\n                  <li>Paneer Tikka Masala</li>\n                  <li>Vegetable Jalfrezi</li>\n                </ul>\n              </div>\n              <div class=\"col-sm-4\">\n                <h2><u>Dessert</u></h2>\n                <ul>\n                  <li>Assorted Kulfi with Falooda</li>\n                </ul>\n              </div>\n            </div>\n          </accordion-group>\n          <accordion-group *ngIf=\"showHotel\" heading=\"Accommodations\">\n            <div class=\"row\">\n              <div class=\"col-sm-2\"></div>\n              <div class=\"col-sm-8\">\n                <p>We have a wedding block of rooms at the BWI Airport Marriott available for our guests at a group rate of $99 per night. Please click the button below to reserve your room.</p>\n              </div>\n            </div>\n            <div class=\"row\">\n              <div class=\"col-sm-12\">\n                <a class=\"btn btn-sm btn-link btn-block\"\n                target=\"_blank\"\n                href=\"http://www.marriott.com/meeting-event-hotels/group-corporate-travel/groupCorp.mi?resLinkData=Patel-Loftus%20Wedding%20In%20Honor%20of%20Nima%20and%20Kevin%5EBWIAP%60PLWPLWA%7CPLWPLWB%6099.00%60USD%60true%605%608/16/19%608/18/19%607/26/19&app=resvlink&stop_mobi=yes\">\n                  <b>Make A Reservation</b>\n                </a>\n              </div>\n            </div>\n          </accordion-group>\n          <accordion-group heading=\"Gift Registry\">\n            <div class=\"row\">\n              <div class=\"col-sm-2\"></div>\n              <div class=\"col-sm-8\">\n                <p>Your presence at our Wedding is the greatest gift of all. However, if you wish to honor us with a gift, we have registered a list with Amazon.</p>\n              </div>\n            </div>\n            <div class=\"row\">\n              <div class=\"col-sm-12\">\n                <a class=\"btn btn-sm btn-link btn-block\"\n                target=\"_blank\"\n                href=\"https://www.amazon.com/wedding/kevin-loftus-poornima-patel-baltimore-august-2019/registry/1OVSD029OPWIR\">\n                  <b>Browse Our Registry</b>\n                </a>\n              </div>\n            </div>\n          </accordion-group>\n        </accordion>\n      </div>\n    </main>\n  </div>\n</div>\n"
+module.exports = "<div class=\"section-gray text-center\">\n  <br />\n  <div class=\"container\">\n    <main>\n      <div class=\"section-gray\">\n        <div class=\"row\">\n          <div class=\"col-6 offset-3\">\n            <h1 *ngIf=\"isAnyoneComing\">We look forward to seeing you!</h1>\n            <h1 *ngIf=\"!isAnyoneComing\">We'll be missing you!</h1>\n          </div>\n        </div>\n        <accordion>\n          <accordion-group *ngIf=\"hasRsvpd\" heading=\"Your RSVP\" [isOpen]=\"true\">\n            <div class=\"bkc\">\n              <div *ngIf=\"guestsAttending.length > 0 && guestsNotAttending.length > 0\" class=\"row\">\n                <div class=\"col-sm-6\">\n                  <h2><u>Attending:</u></h2>\n                  <div *ngFor=\"let guest of rsvpDetails.guests\">\n                    <p *ngIf=\"guest.isAttending\">{{guest.firstName}}&nbsp;{{guest.lastName}}</p>\n                  </div>\n                </div>\n                <div class=\"col-sm-6\">\n                  <h2><u>Not Attending:</u></h2>\n                  <div *ngFor=\"let guest of rsvpDetails.guests\">\n                    <p *ngIf=\"!guest.isAttending\">{{guest.firstName}}&nbsp;{{guest.lastName}}</p>\n                  </div>\n                </div>\n              </div>\n              <div *ngIf=\"guestsAttending.length > 0 && guestsNotAttending.length === 0\" class=\"row\">\n                <div class=\"col-sm-8 offset-sm-2\">\n                  <h2><u>Attending:</u></h2>\n                  <div *ngFor=\"let guest of rsvpDetails.guests\">\n                    <p *ngIf=\"guest.isAttending\">{{guest.firstName}}&nbsp;{{guest.lastName}}</p>\n                  </div>\n                </div>\n              </div>\n              <div *ngIf=\"!isAnyoneComing && guestsNotAttending.length > 0\" class=\"row\">\n                  <div class=\"col-sm-8 offset-sm-2\">\n                    <h2><u>Not Attending:</u></h2>\n                    <div *ngFor=\"let guest of rsvpDetails.guests\">\n                      <p *ngIf=\"!guest.isAttending\">{{guest.firstName}}&nbsp;{{guest.lastName}}</p>\n                    </div>\n                  </div>\n                </div>\n              <hr class=\"horizontalSpacer\" />\n              <div class=\"row\">\n                <div class=\"col-sm-8 offset-2\">\n                  <p>Your confirmation email was sent to {{rsvpDetails.email}} on {{rsvpDetails.rsvp.dateSubmitted | date}}.</p>\n                </div>\n              </div>\n              <div class=\"row\">\n                <div class=\"col-sm-12\">\n                  <button class=\"btn btn-sm btn-link btn-block border\" (click)=\"rsvpAgain()\"><b>Edit My RSVP</b></button>\n                </div>\n              </div>\n            </div>\n          </accordion-group>\n          <accordion-group *ngIf=\"!hasRsvpd\" heading=\"RSVP\" [isOpen]=\"true\">\n            <div class=\"row\">\n              <br />\n              <div class=\"col-sm-12\">\n                <button class=\"btn btn-sm btn-link btn-block border\" (click)=\"rsvpAgain()\"><b>Please RSVP</b></button>\n              </div>\n              <br />\n            </div>\n          </accordion-group>\n          <accordion-group heading=\"Dinner\">\n            <div class=\"row\">\n              <div class=\"col-sm-2\"></div>\n              <div class=\"col-sm-8\">\n                <p>\n                  Hors d'oeuvres will be served during the cocktail hour, and a vegetarian buffet of Indian cuisine will be served during the reception.\n                </p>\n              </div>\n            </div>\n          </accordion-group>\n          <accordion-group heading=\"Directions\">\n              <div class=\"row\">\n                <div class=\"col-sm-2\"></div>\n                <div class=\"col-sm-8\">\n                  <strong><u>From Baltimore/Washington International Thurgood Marshall Airport</u></strong>\n                  <p>The BWI Airport Marriott Hotel provides a courtesy shuttle to and from the BWI Airport. The shuttle runs every 20 minutes, starting at 4 am and running until 1 am.</p>\n                  <p>The BWI Airport Marriott Hotel is 2 miles and a 10 minute drive from the BWI Airport. Taxis are available, as are the Lyft and Uber ride services.</p>\n                  <strong><u>From I-95 North</u></strong>\n                  <p>Take Exit 52 to merge onto MD-295 S toward Baltimore-Washington Parkway</p>\n                  <p>Take the W Nursery Rd Exit</p>\n                  <p>Use the left 2 lanes to turn left onto W Nursery Rd</p>\n                  <p>In 1.2 miles, turn left into the BWI Marriott entrance</p>\n                  <strong><u>From I-95 South</u></strong>\n                  <p>Take Exit 47 A-B and keep right at the fork to continue on Exit 47A, follow signs for Interstate 195 E/BWI Thurgood Marshall Airport</p>\n                  <p>Take exit 2A for MD-295 N/Balto/Wash Pkwy towards Baltimore</p>\n                  <p>Take the W. Nursery Road exit</p>\n                  <p>Keep right at the fork and merge onto W Nursery Rd</p>\n                  <p>In 1.2 miles, turn left into the BWI Marriott entrance</p>\n                </div>\n              </div>\n            </accordion-group>\n          <accordion-group heading=\"Accommodations\">\n            <div class=\"row\">\n              <div class=\"col-sm-2\"></div>\n              <div class=\"col-sm-8\">\n                <p>We have a wedding block of rooms at the BWI Airport Marriott available for our guests at a group rate of $99 per night. Please click the button below if you would like to reserve a room. The deadline for reserving a room at our group rate is July 26th, 2019.</p>\n              </div>\n            </div>\n            <div class=\"row\">\n              <div class=\"col-sm-12\">\n                <a class=\"btn btn-sm btn-link btn-block\"\n                target=\"_blank\"\n                href=\"http://www.marriott.com/meeting-event-hotels/group-corporate-travel/groupCorp.mi?resLinkData=Patel-Loftus%20Wedding%20In%20Honor%20of%20Nima%20and%20Kevin%5EBWIAP%60PLWPLWA%7CPLWPLWB%6099.00%60USD%60true%605%608/16/19%608/18/19%607/26/19&app=resvlink&stop_mobi=yes\">\n                  <b>Make A Reservation</b>\n                </a>\n                <br />\n              </div>\n            </div>\n            <div class=\"row\">\n              <div class=\"col-sm-8 offset-sm-2\">\n                <p>The BWI Airport Marriott also offers a complimentary shuttle to and from the BWI Airport. The shuttle picks up passengers at BWI from Shuttle Zone #1 (door #1, concourses A/B/C), Shuttle Zone #3 (door #14/15, concourses C/D), and Shuttle Zone #4 (door #18/19, concourse E). If you would like to use this free service, please call the hotel at 410-859-8300 when you are at the Shuttle Zone and ready for pick up.</p>\n              </div>\n            </div>\n          </accordion-group>\n          <accordion-group heading=\"Gift Registry\">\n            <div class=\"row\">\n              <div class=\"col-sm-2\"></div>\n              <div class=\"col-sm-8\">\n                <p>Your presence at our wedding is the greatest gift of all. However, if you wish to honor us with a gift, we have registered with Amazon and with Crate&Barrel.</p>\n              </div>\n            </div>\n            <div class=\"row\">\n              <div class=\"col-sm-6\">\n                <a class=\"btn btn-sm btn-link btn-block\"\n                target=\"_blank\"\n                href=\"https://www.amazon.com/wedding/kevin-loftus-poornima-patel-baltimore-august-2019/registry/1OVSD029OPWIR\">\n                  <b>Browse Amazon</b>\n                </a>\n              </div>\n              <div class=\"col-sm-6\">\n                <a class=\"btn btn-sm btn-link btn-block\"\n                target=\"_blank\"\n                href=\"https://www.crateandbarrel.com/gift-registry/kevin-loftus-and-poornima-patel/r5983386\">\n                  <b>Browse Crate&Barrel</b>\n                </a>\n              </div>\n            </div>\n          </accordion-group>\n          <accordion-group heading=\"Contact Us\">\n              <div class=\"row\">\n                <div class=\"col-sm-2\"></div>\n                <div class=\"col-sm-8\">\n                  <p>If you have any questions or concerns, please feel free to email us at <a href=\"mailto:loftuspatelwedding@gmail.com\">loftuspatelwedding@gmail.com</a>.</p>\n                </div>\n              </div>\n            </accordion-group>\n        </accordion>\n      </div>\n    </main>\n  </div>\n</div>\n"
 
 /***/ }),
 
@@ -2354,17 +2451,34 @@ var WeddingDetailsComponent = /** @class */ (function () {
         this.router = router;
         this.subscriptions = [];
         this.isAnyoneComing = true;
+        this.guestsAttending = [];
+        this.guestsNotAttending = [];
         this.hasRsvpd = false;
-        this.showHotel = false;
     }
     WeddingDetailsComponent.prototype.ngOnInit = function () {
         var _this = this;
         this.rsvpService.getDetailedRsvp();
         this.subscriptions.push(this.rsvpService.rsvpUpdatedListener().subscribe(function (savedRsvp) {
-            _this.hasRsvpd = true;
-            _this.rsvpDetails = savedRsvp;
-            _this.isAnyoneComing = _this.rsvpDetails.guests.filter(function (g) { return g.isAttending; }).length > 0;
-            _this.showHotel = _this.rsvpDetails.guests[0].canSeeHotel;
+            if (savedRsvp && savedRsvp.rsvp) {
+                _this.hasRsvpd = true;
+                _this.rsvpDetails = savedRsvp;
+                _this.guestsAttending = _this.rsvpDetails.guests.filter(function (g) { return g.isAttending; });
+                _this.guestsNotAttending = _this.rsvpDetails.guests.filter(function (g) { return !g.isAttending; }).map(function (g) {
+                    if (!g.isPlusOne) {
+                        return g;
+                    }
+                    else {
+                        if (!g.firstName && !g.lastName) {
+                            g.firstName = 'Your';
+                            g.lastName = 'Plus One';
+                        }
+                    }
+                });
+                _this.isAnyoneComing = _this.guestsAttending.length > 0;
+            }
+            else {
+                _this.hasRsvpd = false;
+            }
         }));
     };
     WeddingDetailsComponent.prototype.ngOnDestroy = function () {
@@ -2413,7 +2527,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div id=\"whenwhere\" class=\"section-gray\">\r\n  <div class=\"container\">\r\n    <main class=\"responsive-main\">\r\n    <hr class=\"horizontalSpacer\">\r\n    <div class=\"row\">\r\n      <div class=\"text-center col-md-6\">\r\n        <br />\r\n        <h1>When</h1>\r\n        <p><b>August 17th, 2019</b></p>\r\n        <p>4:00PM - Ceremony</p>\r\n        <p>5:00PM - Cocktail Hour</p>\r\n        <p>6:00PM - Dinner and Reception</p>\r\n      </div>\r\n      <div class=\"text-center col-md-6\">\r\n          <br />\r\n        <h1>Where</h1>\r\n        <p><b>BWI Marriott Hotel</b></p>\r\n        <p>1743 W Nursery Rd</p>\r\n        <p>Linthicum Heights, MD 21090</p>\r\n      </div>\r\n    </div>\r\n    <br />\r\n    <hr class=\"horizontalSpacer\">\r\n    </main>\r\n  </div>\r\n</div>\r\n"
+module.exports = "<div id=\"whenwhere\" class=\"section-gray\">\r\n  <div class=\"container\">\r\n    <main class=\"responsive-main\">\r\n    <hr class=\"horizontalSpacer\">\r\n    <div class=\"row\">\r\n      <div class=\"text-center col-md-6\">\r\n        <br />\r\n        <h1>When</h1>\r\n        <p><b>August 17th, 2019</b></p>\r\n        <p>4:00PM - Ceremony</p>\r\n        <p>5:00PM - Cocktail Hour</p>\r\n        <p>6:00PM - Dinner and Reception</p>\r\n      </div>\r\n      <div class=\"text-center col-md-6\">\r\n          <br />\r\n        <h1>Where</h1>\r\n        <p><b>BWI Airport Marriott Hotel</b></p>\r\n        <p>1743 W Nursery Rd</p>\r\n        <p>Linthicum Heights, MD 21090</p>\r\n      </div>\r\n    </div>\r\n    <br />\r\n    <hr class=\"horizontalSpacer\">\r\n    </main>\r\n  </div>\r\n</div>\r\n"
 
 /***/ }),
 

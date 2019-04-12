@@ -1,14 +1,17 @@
 const RSVP = require('../models/rsvp');
 const Guest = require('../models/guest');
-const GuestController = require('../controllers/guest');
 const User = require('../models/user');
+const UserController = require('../controllers/user');
+const GuestController = require('../controllers/guest');
 const async = require('async');
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
 const stdError = new Error('An error has occurred.');
 const unkError = new Error('An unknown error has occurred.');
+const { google } = require('googleapis');
+const OAuth2 = google.auth.OAuth2;
 
-exports.guestResponseToRSVP = (req, res, next) => {
+exports.guestResponseToRSVP = async (req, res, next) => {
   // logic flow:
   // receiving a list of guests with attending/not attending
   // req.body.guests[0].firstName, req.body.guests[0].lastName, req.body.guests[0].isAttending
@@ -22,13 +25,15 @@ exports.guestResponseToRSVP = (req, res, next) => {
   // (4) save the RSVP comments with a timestamp in the RSVP schema
   // (5) send an email to hosts and guest with the data they submitted
   // (6) send something back to the front end to let it know rsvp was submitted
-  async.waterfall([async.apply(saveUserEmail, req), updateGuests, saveRSVPDetails], (err, result) => {
+  async.waterfall([async.apply(saveUserEmail, req), updateGuests, saveRSVPDetails], async (err, result) => {
     if (err) {
       next(err);
     } else {
-      res.status(200).json({
-        message: 'RSVP saved successfully!',
-        rsvpSaved: true
+      await sendRSVPEmail(req, (result) => {
+        res.status(200).json({
+          message: 'RSVP saved successfully!',
+          rsvpSaved: true
+        });
       });
     }
   });
@@ -99,24 +104,81 @@ rsvpToSave.save()
   });
 }
 
-function sendRSVPEmail(params, callback) {
+async function sendRSVPEmail(params, callback) {
+  const oauth2Client = new OAuth2(
+    process.env.EMAIL_API_CLIENT_ID,
+    process.env.EMAIL_API_CLIENT_SECRET,
+    "https://developers.google.com/oauthplayground"
+  );
+  oauth2Client.setCredentials({
+    refresh_token: process.env.EMAIL_API_REFRESH_TOKEN
+  });
+  const tokens = await oauth2Client.refreshAccessToken();
+  const accessToken = tokens.credentials.access_token;
+  let attendingLis = '';
+  let firstAttending = true;
+  let notAttendingLis = '';
+  let firstNotAttending = true;
+  params.body.guests.forEach((guest) => {
+    if (guest.isAttending) {
+      if (firstAttending) {
+        attendingLis = `<div><u>Attending</u></div><ul>`;
+        firstAttending = false;
+      }
+      attendingLis += `<li>${guest.firstName} ${guest.lastName}</li>`;
+    } else {
+      if (firstNotAttending) {
+        notAttendingLis = `<div><u>Not Attending</u></div><ul>`;
+        firstNotAttending = false;
+      }
+      if (guest.isPlusOne) {
+        guest.firstName = 'Your';
+        guest.lastName = 'Plus One';
+      }
+      notAttendingLis += `<li>${guest.firstName} ${guest.lastName}</li>`;
+    }
+  });
+  if (attendingLis) attendingLis += "</ul><br/>";
+  if (notAttendingLis) notAttendingLis += "</ul><br/>";
+  const userComments = params.body.comments;
+  let emailComments = '';
+  if (userComments && userComments.length > 0) {
+    emailComments = `<div>Comments:</div><br/><p>${userComments}</p><br/>`;
+  }
   const userEmail = params.body.email;
   const emailBody = `
-    <p>Thank you for RSVPing to our wedding!</p>
+    <h1>Thank you for RSVPing to our wedding!</h1>
+    <h3>We look forward to seeing you on August 17th, 2019 at the BWI Airport Marriott hotel.</h3>
+    <p>Here are the details you provided:</p>
+    <br />
+    ${attendingLis}
+    ${notAttendingLis}
+    ${emailComments}
+    <p>If your plans change, please edit your RSVP by logging into https://patelwedsloft.us/rsvp and updating your selections.</p>
+    <br />
+    <p>If you have any questions, feel free to reply to this email and we will get back to you as soon as possible.</p>
     `;
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'patelwedsloftus@gmail.com',
-      pass: process.env.GMAIL_PW
+      type: 'OAuth2',
+      user: 'loftuspatelwedding@gmail.com',
+      clientId: process.env.EMAIL_API_CLIENT_ID,
+      clientSecret: process.env.EMAIL_API_CLIENT_SECRET,
+      refreshToken: process.env.EMAIL_API_REFRESH_TOKEN,
+      accessToken: accessToken
     }
   });
   const mailOptions = {
-    from: 'patelwedsloftus@gmail.com',
+    from: 'loftuspatelwedding@gmail.com',
     to: userEmail,
+    bcc: 'loftuspatelwedding@gmail.com',
     subject: 'Thanks for RSVPing to the Patel/Loftus Wedding!',
+    generateTextFromHTML: true,
     html: emailBody
   };
+  let info = await transporter.sendMail(mailOptions);
+  callback(null, params);
 }
 
 exports.findExistingRsvp = (req, res, next) => {
@@ -132,7 +194,10 @@ exports.findExistingRsvp = (req, res, next) => {
   })
   .then((guests) => {
     detailedRsvp.guests = guests;
-    detailedRsvp.email = req.userData.email;
+    return UserController.getEmail(req.userData.userId);
+  })
+  .then((userEmail) => {
+    detailedRsvp.email = userEmail;
     res.status(200).json({
       detailedRsvp: detailedRsvp
     });
