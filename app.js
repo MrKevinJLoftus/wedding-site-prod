@@ -1,25 +1,36 @@
 const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
+const expressValidator = require('express-validator');
 const mongoose = require('mongoose');
 
 // external routing files
 const userRoutes = require('./routes/user');
 const rsvpRoutes = require('./routes/rsvp');
-
+const guestRoutes = require('./routes/guest');
 
 const app = express();
 
-mongoose.connect(process.env.MONGO_ATLAS_CS, {useNewUrlParser: true})
+// mongoose.connect(process.env.MONGO_ATLAS_CS)
+mongoose.connect(process.env.MLAB_CS)
   .then(() => {
     console.log('Connected to database!');
   })
-  .catch(() => {
+  .catch((err) => {
     console.log('Connection failed!');
+    console.log(err);
   });
+
+app.use((req, res, next) => {
+  if (!req.secure) {
+    return res.redirect('https://patelwedsloft.us');
+  }
+  next();
+});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));
+app.use(expressValidator());
 app.use("/", express.static(path.join(__dirname, "wedding-site")));
 
 app.use((req, res, next) => {
@@ -32,8 +43,17 @@ app.use((req, res, next) => {
 
 app.use("/api/user", userRoutes)
 app.use("/api/rsvp", rsvpRoutes);
+app.use("/api/guest", guestRoutes);
 app.use((req, res, next) => {
     res.sendFile(path.join(__dirname, "wedding-site", "index.html"));
+});
+
+// Custom error handler
+app.use(function(err, req, res, next) {
+  // Any request to this server will get here, and will send an HTTP
+  // response with the error message provided
+  console.log(err);
+  res.status(500).json({ message: err.message });
 });
 
 module.exports = app;

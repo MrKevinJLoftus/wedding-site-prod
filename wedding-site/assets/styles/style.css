@@ -15,12 +15,6 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* =======================================================
-*
-* 	Template Style
-*	Edit this section
-*
-* ======================================================= */
 .hindi {
   font-family: 'Eczar', serif;
 }
@@ -39,7 +33,7 @@
 .flowers {
   background-image:url('../../assets/img/Peacock_feathers_closeup.jpg');
   height: 35rem;
-  width: 100%;
+  width: 100% !important;
 }
 
 .mehndi {
@@ -205,17 +199,6 @@ figure {
   }
 }
 
-/* .overlay {
-  position: absolute !important;
-  width: 100%;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  z-index: 1;
-  background: rgba(0, 0, 0, 0.4);
-} */
-
 .cover {
   background-size: cover;
   position: relative;
@@ -281,7 +264,6 @@ figure {
   padding: 5px 0px;
 }
 
-/* Superfish Override Menu */
 .sf-menu {
   margin: 7px 0 0 0 !important;
 }
@@ -356,18 +338,6 @@ figure {
   *padding-right: 1em;
 }
 
-/* .sf-arrows .sf-with-ul:after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  right: 1em;
-  margin-top: -3px;
-  height: 0;
-  width: 0;
-  border: 5px solid transparent;
-  border-top-color: #ccc;
-} */
-
 .sf-arrows > li > .sf-with-ul:focus:after,
 .sf-arrows > li:hover > .sf-with-ul:after,
 .sf-arrows > .sfHover > .sf-with-ul:after {
@@ -386,22 +356,6 @@ figure {
 .sf-arrows ul .sfHover > .sf-with-ul:after {
   border-left-color: #ccc;
 }
-/*
-#header-section {
-  padding: 0;
-  position: relative;
-  position: fixed;
-  left: 0;
-  width: 100%;
-  z-index: 9999999;
-  background: #fff;
-}
-
-.nav-header {
-  position: relative;
-  float: left;
-  width: 100%;
-} */
 
 #logo {
   position: relative;
@@ -448,50 +402,9 @@ figure {
   color: #4B0082 !important;
 }
 
-/* #primary-menu > li > .sf-with-ul:after {
-  border: none !important;
-  font-family: 'icomoon';
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1; */
-  /* Better Font Rendering =========== */
-  /* -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  position: absolute;
-  float: right;
-  margin-right: -0px;
-  top: 50%;
-  font-size: 12px;
-  margin-top: -7px;
-  content: "\e922";
-  color: rgba(0, 0, 0, 0.5);
-} */
-
 #primary-menu > li > ul li {
   position: relative;
 }
-
-/* #primary-menu > li > ul li > .sf-with-ul:after {
-  border: none !important;
-  font-family: 'icomoon';
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1; */
-  /* Better Font Rendering =========== */
-  /* -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  position: absolute;
-  float: right;
-  margin-right: 10px;
-  top: 20px;
-  font-size: 12px;
-  content: "\e924";
-  color: rgba(0, 0, 0, 0.5);
-} */
 
 #primary-menu .sub-menu {
   padding: 10px 7px 10px;
@@ -512,39 +425,6 @@ figure {
   left: 100%;
 }
 
-/* #primary-menu .sub-menu:before {
-  position: absolute;
-  top: -9px;
-  left: 20px;
-  width: 0;
-  height: 0;
-  content: '';
-} */
-
-/* #primary-menu .sub-menu:after {
-  position: absolute;
-  top: -8px;
-  left: 21px;
-  width: 0;
-  height: 0;
-  border-right: 8px solid transparent;
-  border-bottom: 8px solid #fff;
-  border-bottom: 8px solid white;
-  border-left: 8px solid transparent;
-  content: '';
-} */
-
-/* #primary-menu .sub-menu .sub-menu:before {
-  top: 6px;
-  left: 100%;
-}
-
-#primary-menu .sub-menu .sub-menu:after {
-  top: 7px;
-  right: 100%;
-  border: none !important;
-} */
-
 .site-header.has-image #primary-menu .sub-menu {
   border-color: #ebebeb;
   -webkit-box-shadow: 0 5px 15px 4px rgba(0, 0, 0, 0.09);
@@ -553,20 +433,6 @@ figure {
   -o-box-shadow: 0 5px 15px 4px rgba(0, 0, 0, 0.09);
   box-shadow: 0 5px 15px 4px rgba(0, 0, 0, 0.09);
 }
-/*
-.site-header.has-image #primary-menu .sub-menu:before {
-  display: none;
-} */
-/*
-#primary-menu .sub-menu a {
-  letter-spacing: 0;
-  padding: 0 15px;
-  font-size: 18px;
-  line-height: 34px;
-  color: #575757 !important;
-  text-transform: none;
-  background: none;
-} */
 
 #primary-menu .sub-menu a:hover {
   color: #4B0082 !important;
@@ -1298,20 +1164,3 @@ figure {
 .no-js #loader {
   display: none;
 }
-
-/* .js #loader {
-  display: block;
-  position: absolute;
-  left: 100px;
-  top: 0;
-} */
-
-/* .loader {
-  position: fixed;
-  left: 0px;
-  top: 0px;
-  width: 100%;
-  height: 100%;
-  z-index: 9999;
-  background: url(../img/bab_nima.jpg) center no-repeat #222222;
-} */

@@ -6,9 +6,12 @@
     "bcrypt": "2.0.1",
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
+    "express-validator": "^5.3.1",
+    "googleapis": "^39.2.0",
     "jsonwebtoken": "^8.3.0",
     "mongoose": "5.2.7",
     "mongoose-unique-validator": "^2.0.1",
+    "nodemailer": "^5.1.1",
     "nodemon": "^1.18.3"
   }
 }
