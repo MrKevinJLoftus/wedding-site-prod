@@ -6,7 +6,8 @@ const guestSchema = mongoose.Schema({
   lastName: {type: String},
   isPlusOne: {type: Boolean},
   isAttending: {type: Boolean},
-  hasRSVPd: {type:Boolean}
+  hasRSVPd: {type:Boolean},
+  sortOrder: {type:Number}
 });
 
 module.exports = mongoose.model('Guest', guestSchema);

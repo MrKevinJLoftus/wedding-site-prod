@@ -187,7 +187,7 @@ exports.findExistingRsvp = (req, res, next) => {
   // tack on user email
   console.log('calling findExistingRsvp');
   let detailedRsvp = {};
-  RSVP.findOne({ userId: req.userData.userId })
+  RSVP.findOne({ userId: req.userData.userId }).sort({dateSubmitted: -1})
   .then((rsvp) => {
     detailedRsvp.rsvp = rsvp;
     return getGuests(req);
