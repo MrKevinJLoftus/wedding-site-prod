@@ -22,10 +22,11 @@ mongoose.connect(process.env.MLAB_CS)
   });
 
 app.use((req, res, next) => {
-  if (req.protocol === 'http') {
-    res.redirect('https://patelwedsloft.us');
+  if (req.secure) {
+    next();
+  } else {
+    res.redirect(`https://${req.headers.host}${req.url}`);
   }
-  next();
 });
 
 app.use(bodyParser.json());
