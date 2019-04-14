@@ -9,7 +9,7 @@ module.exports = (req, res, next) => {
     const decodedToken = jwt.verify(token,
       process.env.JWT_KEY
     );
-    if (decodedToken.isAdmin === false) {
+    if (!decodedToken.isAdmin || decodedToken.isAdmin === false) {
       res.status(401).json({message: "Authorization failed!"});
     }
     req.userData = {username: decodedToken.username, userId: decodedToken.userId};

@@ -6,12 +6,12 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 const checkAuth = require('../middleware/check-auth');
+const checkAdmin = require('../middleware/check-isAdmin');
 const userController = require('../controllers/user');
 
 const router = express.Router();
 
 router.post("/signup", checkAuth, checkAdmin, userController.userSignUp);
-// router.post("/signup", userController.userSignUp);
 
 router.post("/login", userController.userLogin);
 
