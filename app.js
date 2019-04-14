@@ -22,7 +22,7 @@ mongoose.connect(process.env.MLAB_CS)
   });
 
 app.use((req, res, next) => {
-  if (req.get('x-forwarded-proto') === 'https') {
+  if (!req.get('x-forwarded-proto') || req.get('x-forwarded-proto') === 'https') {
     next();
   } else {
     res.redirect(`https://${req.headers.host}${req.url}`);
