@@ -38,13 +38,13 @@ app.use("/api/user", userRoutes)
 app.use("/api/rsvp", rsvpRoutes);
 app.use("/api/guest", guestRoutes);
 
-app.use((req, res, next) => {
-  if (req.get('x-forwarded-proto') === 'https') {
-    next();
-  } else {
-    res.redirect(`https://${req.headers.host}${req.url}`);
-  }
-});
+// app.use((req, res, next) => {
+//   if (req.get('x-forwarded-proto') === 'https') {
+//     next();
+//   } else {
+//     res.redirect(`https://${req.headers.host}${req.url}`);
+//   }
+// });
 
 app.use((req, res, next) => {
     res.sendFile(path.join(__dirname, "wedding-site", "index.html"));
