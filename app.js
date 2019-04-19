@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const userRoutes = require('./routes/user');
 const rsvpRoutes = require('./routes/rsvp');
 const guestRoutes = require('./routes/guest');
+const reportRoutes = require('./routes/report');
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use((req, res, next) => {
 app.use("/api/user", userRoutes)
 app.use("/api/rsvp", rsvpRoutes);
 app.use("/api/guest", guestRoutes);
+app.use("/api/report", reportRoutes);
 
 // app.use((req, res, next) => {
 //   if (req.get('x-forwarded-proto') === 'https') {

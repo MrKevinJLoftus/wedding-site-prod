@@ -8,6 +8,7 @@ const guestController = require('../controllers/guest');
 const router = express.Router();
 
 router.get('/', checkAuth, guestController.getGuests);
-router.post('/', checkAuth, checkAdmin, guestController.addGuests);
+router.post('/', checkAuth, guestController.addGuests);
+router.post('/extra', checkAuth, guestController.addExtraGuestsForUser);
 
 module.exports = router;

@@ -33,6 +33,23 @@ exports.addGuests = (req, res, next) => {
   });
 }
 
+exports.addExtraGuestsForUser = (req, res, next) => {
+  console.log('Calling addExtraGuestsForUser');
+  async.waterfall([async.apply(tackOnUserToGuests, req), insertGuestsIntoDb],
+  (err, results) => {
+    if (err) {
+      console.log(err);
+      next(stdError);
+    } else {
+      console.log('addExtraGuestsForUser succeeded!');
+      console.log(results);
+      res.status(201).json({
+        guestsAdded: results
+      });
+    }
+  });
+}
+
 function removeAllGuestsForUser(req, callback) {
   console.log('calling removeAllGuestsForUser');
   const uid = req.userData.userId;
