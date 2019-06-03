@@ -60,30 +60,36 @@ function updateGuests(params, callback) {
   if (!guests || guests.length < 1) {
     callback(stdError);
   } else {
-    async.each(guests, (guest, cb) => {
-      Guest.update({ _id: guest._id },
-        {
-          firstName: guest.firstName,
-          lastName: guest.lastName,
-          isAttending: guest.isAttending,
-          hasRSVPd: true
-        }, (error, raw) => {
-          if (error) {
-            cb(error);
-          } else {
-            cb();
-          }
-        });
-    }, (err) => {
-      if (err) {
-        console.log('updateGuests in controllers/rsvp.js failed.');
-        console.log(err);
-        callback(stdError);
-      } else {
-        console.log('updateGuests succeeded!');
-        callback(null, params);
-      }
-    });
+    try {
+      async.each(guests, (guest, cb) => {
+        Guest.update({ _id: guest._id },
+          {
+            firstName: guest.firstName,
+            lastName: guest.lastName,
+            isAttending: guest.isAttending,
+            hasRSVPd: true
+          }, (error, raw) => {
+            if (error) {
+              cb(error);
+            } else {
+              cb();
+            }
+          });
+      }, (err) => {
+        if (err) {
+          console.log('updateGuests in controllers/rsvp.js failed.');
+          console.log(err);
+          callback(stdError);
+        } else {
+          console.log('updateGuests succeeded!');
+          callback(null, params);
+        }
+      });
+    } catch (err) {
+      console.log('updateGuests in controllers/rsvp.js failed.');
+      console.log(err);
+      callback(stdError);
+    }
   }
 }
 
@@ -92,8 +98,8 @@ function saveRSVPDetails(params, callback) {
     userId: mongoose.Types.ObjectId(params.userData.userId),
     comments: params.body.comments,
     dateSubmitted: Date.now()
-});
-rsvpToSave.save()
+  });
+  rsvpToSave.save()
   .then(result => {
     params.savedRSVP = rsvpToSave;
     callback(null, params);
@@ -105,85 +111,91 @@ rsvpToSave.save()
 }
 
 async function sendRSVPEmail(params, callback) {
-  const oauth2Client = new OAuth2(
-    process.env.EMAIL_API_CLIENT_ID,
-    process.env.EMAIL_API_CLIENT_SECRET,
-    "https://developers.google.com/oauthplayground"
-  );
-  oauth2Client.setCredentials({
-    refresh_token: process.env.EMAIL_API_REFRESH_TOKEN
-  });
-  const tokens = await oauth2Client.refreshAccessToken();
-  const accessToken = tokens.credentials.access_token;
-  let attendingLis = '';
-  let firstAttending = true;
-  let notAttendingLis = '';
-  let firstNotAttending = true;
-  let isAnyoneComing = false;
-  params.body.guests.forEach((guest) => {
-    if (guest.isAttending) {
-      isAnyoneComing = true;
-      if (firstAttending) {
-        attendingLis = `<div><u>Attending</u></div><ul>`;
-        firstAttending = false;
+  try {
+    const oauth2Client = new OAuth2(
+      process.env.EMAIL_API_CLIENT_ID,
+      process.env.EMAIL_API_CLIENT_SECRET,
+      "https://developers.google.com/oauthplayground"
+    );
+    oauth2Client.setCredentials({
+      refresh_token: process.env.EMAIL_API_REFRESH_TOKEN
+    });
+    const tokens = await oauth2Client.refreshAccessToken();
+    const accessToken = tokens.credentials.access_token;
+    let attendingLis = '';
+    let firstAttending = true;
+    let notAttendingLis = '';
+    let firstNotAttending = true;
+    let isAnyoneComing = false;
+    params.body.guests.forEach((guest) => {
+      if (guest.isAttending) {
+        isAnyoneComing = true;
+        if (firstAttending) {
+          attendingLis = `<div><u>Attending</u></div><ul>`;
+          firstAttending = false;
+        }
+        attendingLis += `<li>${guest.firstName} ${guest.lastName}</li>`;
+      } else {
+        if (firstNotAttending) {
+          notAttendingLis = `<div><u>Not Attending</u></div><ul>`;
+          firstNotAttending = false;
+        }
+        if (guest.isPlusOne) {
+          guest.firstName = 'Your';
+          guest.lastName = 'Plus One';
+        }
+        notAttendingLis += `<li>${guest.firstName} ${guest.lastName}</li>`;
       }
-      attendingLis += `<li>${guest.firstName} ${guest.lastName}</li>`;
-    } else {
-      if (firstNotAttending) {
-        notAttendingLis = `<div><u>Not Attending</u></div><ul>`;
-        firstNotAttending = false;
-      }
-      if (guest.isPlusOne) {
-        guest.firstName = 'Your';
-        guest.lastName = 'Plus One';
-      }
-      notAttendingLis += `<li>${guest.firstName} ${guest.lastName}</li>`;
+    });
+    if (attendingLis) attendingLis += "</ul><br/>";
+    if (notAttendingLis) notAttendingLis += "</ul><br/>";
+    const userComments = params.body.comments;
+    let emailComments = '';
+    if (userComments && userComments.length > 0) {
+      emailComments = `<div>Comments:</div><br/><p>${userComments}</p><br/>`;
     }
-  });
-  if (attendingLis) attendingLis += "</ul><br/>";
-  if (notAttendingLis) notAttendingLis += "</ul><br/>";
-  const userComments = params.body.comments;
-  let emailComments = '';
-  if (userComments && userComments.length > 0) {
-    emailComments = `<div>Comments:</div><br/><p>${userComments}</p><br/>`;
+    const userEmail = params.body.email;
+    const isAnyoneComingText = (isAnyoneComing) ? 
+      `We look forward to seeing you on August 17th, 2019 at the BWI Airport Marriott hotel.` :
+      `We'll be missing you!`;
+    const emailBody = `
+      <h1>Thank you for RSVPing to our wedding!</h1>
+      <h3>${isAnyoneComingText}</h3>
+      <p>Here are the details you provided:</p>
+      <br />
+      ${attendingLis}
+      ${notAttendingLis}
+      ${emailComments}
+      <p>If your plans change, please edit your RSVP by logging into https://patelwedsloft.us/rsvp and updating your selections.</p>
+      <br />
+      <p>If you have any questions, feel free to reply to this email and we will get back to you as soon as possible.</p>
+      `;
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        type: 'OAuth2',
+        user: 'loftuspatelwedding@gmail.com',
+        clientId: process.env.EMAIL_API_CLIENT_ID,
+        clientSecret: process.env.EMAIL_API_CLIENT_SECRET,
+        refreshToken: process.env.EMAIL_API_REFRESH_TOKEN,
+        accessToken: accessToken
+      }
+    });
+    const mailOptions = {
+      from: 'loftuspatelwedding@gmail.com',
+      to: userEmail,
+      bcc: 'loftuspatelwedding@gmail.com',
+      subject: 'Thanks for RSVPing to the Patel/Loftus Wedding!',
+      generateTextFromHTML: true,
+      html: emailBody
+    };
+    let info = await transporter.sendMail(mailOptions);
+    callback(null, params);
+  } catch (err) {
+    console.log('sendRSVPEmail failed!');
+    console.log(err);
+    callback(stdError);
   }
-  const userEmail = params.body.email;
-  const isAnyoneComingText = (isAnyoneComing) ? 
-    `We look forward to seeing you on August 17th, 2019 at the BWI Airport Marriott hotel.` :
-    `We'll be missing you!`;
-  const emailBody = `
-    <h1>Thank you for RSVPing to our wedding!</h1>
-    <h3>${isAnyoneComingText}</h3>
-    <p>Here are the details you provided:</p>
-    <br />
-    ${attendingLis}
-    ${notAttendingLis}
-    ${emailComments}
-    <p>If your plans change, please edit your RSVP by logging into https://patelwedsloft.us/rsvp and updating your selections.</p>
-    <br />
-    <p>If you have any questions, feel free to reply to this email and we will get back to you as soon as possible.</p>
-    `;
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      type: 'OAuth2',
-      user: 'loftuspatelwedding@gmail.com',
-      clientId: process.env.EMAIL_API_CLIENT_ID,
-      clientSecret: process.env.EMAIL_API_CLIENT_SECRET,
-      refreshToken: process.env.EMAIL_API_REFRESH_TOKEN,
-      accessToken: accessToken
-    }
-  });
-  const mailOptions = {
-    from: 'loftuspatelwedding@gmail.com',
-    to: userEmail,
-    bcc: 'loftuspatelwedding@gmail.com',
-    subject: 'Thanks for RSVPing to the Patel/Loftus Wedding!',
-    generateTextFromHTML: true,
-    html: emailBody
-  };
-  let info = await transporter.sendMail(mailOptions);
-  callback(null, params);
 }
 
 exports.findExistingRsvp = (req, res, next) => {
