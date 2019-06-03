@@ -119,8 +119,10 @@ async function sendRSVPEmail(params, callback) {
   let firstAttending = true;
   let notAttendingLis = '';
   let firstNotAttending = true;
+  let isAnyoneComing = false;
   params.body.guests.forEach((guest) => {
     if (guest.isAttending) {
+      isAnyoneComing = true;
       if (firstAttending) {
         attendingLis = `<div><u>Attending</u></div><ul>`;
         firstAttending = false;
@@ -146,9 +148,12 @@ async function sendRSVPEmail(params, callback) {
     emailComments = `<div>Comments:</div><br/><p>${userComments}</p><br/>`;
   }
   const userEmail = params.body.email;
+  const isAnyoneComingText = (isAnyoneComing) ? 
+    `We look forward to seeing you on August 17th, 2019 at the BWI Airport Marriott hotel.` :
+    `We'll be missing you!`;
   const emailBody = `
     <h1>Thank you for RSVPing to our wedding!</h1>
-    <h3>We look forward to seeing you on August 17th, 2019 at the BWI Airport Marriott hotel.</h3>
+    <h3>${isAnyoneComingText}</h3>
     <p>Here are the details you provided:</p>
     <br />
     ${attendingLis}
