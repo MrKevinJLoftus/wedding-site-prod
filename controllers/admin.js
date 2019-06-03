@@ -22,7 +22,8 @@ exports.runRsvpReport = (req, res, next) => {
                 reportData: [],
                 totalGuestsComing: allGs.filter(g => g.isAttending).length,
                 numberOfGuestsWhoHaveRsvpdAndAreNotComing: allGs.filter(g => g.hasRSVPd && !g.isAttending).length,
-                numberOfGuestsRsvpd: allGs.filter(g => g.hasRSVPd).length
+                numberOfGuestsRsvpd: allGs.filter(g => g.hasRSVPd).length,
+                totalNumberOfGuests: allGs.length
             };
             for (let i = 0; i < allUs.length; i++) {
                 const currentUser = allUs[i];

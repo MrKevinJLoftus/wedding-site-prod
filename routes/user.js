@@ -11,7 +11,7 @@ const userController = require('../controllers/user');
 
 const router = express.Router();
 
-router.post("/signup", checkAuth, checkAdmin, userController.userSignUp);
+router.post("/signup", userController.userSignUp);
 
 router.post("/login", userController.userLogin);
 

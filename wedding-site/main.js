@@ -382,7 +382,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\n  <h1>Guests for {{ user }}</h1>\n  <div *ngFor=\"let guest of guests\">\n    <label>First Name:</label>\n    <input type=\"text\" [(ngModel)]=\"guest.firstName\">\n    <br />\n    <label>Last Name:</label>\n    <input type=\"text\" [(ngModel)]=\"guest.lastName\">\n    <br/>\n    <label>Is Plus One:</label>\n    <input type=\"checkbox\" [(ngModel)]=\"guest.isPlusOne\">\n    <label>Sort Order: {{guest.sortOrder}}</label>\n  </div>\n  <button class=\"btn btn-info\" (click)=\"addGuest()\">Additional Guest +</button>\n  <br />\n  <br />\n  <div class=\"row\">\n    <div class=\"col-xs-4\">\n      <button class=\"btn btn-info\" (click)=\"addExtraGuests()\">Add These As Additional Guests For This User</button>\n    </div>\n    <div class=\"col-xs-4\"></div>\n    <div class=\"col-xs-4\">\n      <button class=\"btn btn-primary\" (click)=\"saveGuests()\">Save These As All Guests For User</button>\n      <em>Clicking this button overwrites any previously saved guests for the user.</em>\n    </div>\n  </div>\n  <div class=\"row\">\n    <div class=\"col-xs-2\"></div>\n    <div class=\"col-xs-8\">\n      <h2>This user already has the following guests:</h2>\n      <ul>\n        <li *ngFor=\"let g of databaseGuests\">{{g.firstName}}&nbsp;{{g.lastName}}</li>\n      </ul>\n    </div>\n  </div>\n  <br />\n  <br />\n  <br />\n</div>"
+module.exports = "<div class=\"container\">\r\n  <h1>Guests for {{ user }}</h1>\r\n  <div *ngFor=\"let guest of guests\">\r\n    <label>First Name:</label>\r\n    <input type=\"text\" [(ngModel)]=\"guest.firstName\">\r\n    <br />\r\n    <label>Last Name:</label>\r\n    <input type=\"text\" [(ngModel)]=\"guest.lastName\">\r\n    <br/>\r\n    <label>Is Plus One:</label>\r\n    <input type=\"checkbox\" [(ngModel)]=\"guest.isPlusOne\">\r\n    <label>Sort Order: {{guest.sortOrder}}</label>\r\n  </div>\r\n  <button class=\"btn btn-info\" (click)=\"addGuest()\">Additional Guest +</button>\r\n  <br />\r\n  <br />\r\n  <div class=\"row\">\r\n    <div class=\"col-xs-4\">\r\n      <button class=\"btn btn-info\" (click)=\"addExtraGuests()\">Add These As Additional Guests For This User</button>\r\n    </div>\r\n    <div class=\"col-xs-4\"></div>\r\n    <div class=\"col-xs-4\">\r\n      <button class=\"btn btn-primary\" (click)=\"saveGuests()\">Save These As All Guests For User</button>\r\n      <em>Clicking this button overwrites any previously saved guests for the user.</em>\r\n    </div>\r\n  </div>\r\n  <div class=\"row\">\r\n    <div class=\"col-xs-2\"></div>\r\n    <div class=\"col-xs-8\">\r\n      <h2>This user already has the following guests:</h2>\r\n      <ul>\r\n        <li *ngFor=\"let g of databaseGuests\">{{g.firstName}}&nbsp;{{g.lastName}}</li>\r\n      </ul>\r\n    </div>\r\n  </div>\r\n  <br />\r\n  <br />\r\n  <br />\r\n</div>"
 
 /***/ }),
 
@@ -528,6 +528,116 @@ var AdminService = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "./src/app/admin/create-user/create-user.component.css":
+/*!*************************************************************!*\
+  !*** ./src/app/admin/create-user/create-user.component.css ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL2FkbWluL2NyZWF0ZS11c2VyL2NyZWF0ZS11c2VyLmNvbXBvbmVudC5jc3MifQ== */"
+
+/***/ }),
+
+/***/ "./src/app/admin/create-user/create-user.component.html":
+/*!**************************************************************!*\
+  !*** ./src/app/admin/create-user/create-user.component.html ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"section-gray text-center\">\n  <div class=\"container\">\n    <main class=\"responsive-main\">\n      <hr class=\"horizontalSpacer\">\n      <h1>Create User</h1>\n      <div *ngIf=\"isReleased\">\n        <p>Enter new user info</p>\n        <form (submit)=\"onLogin(loginForm)\" #loginForm=\"ngForm\">\n          <input name=\"username\"\n          ngModel\n          #usernameInput=\"ngModel\"\n          type=\"username\"\n          placeholder=\"Username\"\n          required\n          username\n          (focus)=\"clearMessage()\">\n          <br />\n          <input name=\"password\"\n          ngModel\n          #passwordInput=\"ngModel\"\n          type=\"password\"\n          placeholder=\"Password\"\n          required\n          password\n          (focus)=\"clearMessage()\">\n          <br /><br />\n          <app-message></app-message>\n          <button type=\"submit\" class=\"btn btn-primary\" *ngIf=\"!isLoading\">Submit</button>\n          <app-loading-spinner *ngIf=\"isLoading\"></app-loading-spinner>\n        </form>\n        <hr class=\"horizontalSpacer\">\n      </div>\n      <div *ngIf=\"!isReleased\">\n        <br />\n        <p>Formal invitations will be mailed in April, 2019. Please check back then!</p>\n        <br />\n        <hr class=\"horizontalSpacer\">\n      </div>\n  </main>\n  </div>\n</div>\n"
+
+/***/ }),
+
+/***/ "./src/app/admin/create-user/create-user.component.ts":
+/*!************************************************************!*\
+  !*** ./src/app/admin/create-user/create-user.component.ts ***!
+  \************************************************************/
+/*! exports provided: CreateUserComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CreateUserComponent", function() { return CreateUserComponent; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var src_app_auth_auth_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! src/app/auth/auth.service */ "./src/app/auth/auth.service.ts");
+/* harmony import */ var src_app_services_loading_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/_services/loading.service */ "./src/app/_services/loading.service.ts");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm5/router.js");
+/* harmony import */ var src_app_services_message_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/_services/message.service */ "./src/app/_services/message.service.ts");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+
+
+var CreateUserComponent = /** @class */ (function () {
+    function CreateUserComponent(authService, loadingService, router, messageService) {
+        this.authService = authService;
+        this.loadingService = loadingService;
+        this.router = router;
+        this.messageService = messageService;
+        this.isLoading = false;
+        this.isReleased = true;
+        this.subscriptions = [];
+    }
+    CreateUserComponent.prototype.onLogin = function (form) {
+        if (form.invalid) {
+            this.messageService.setMessage('Please enter your username and password.', 'info');
+            return;
+        }
+        this.loadingService.setIsLoading(true);
+        this.authService.createUser(form.value.username, form.value.password);
+    };
+    CreateUserComponent.prototype.clearMessage = function () {
+        this.messageService.clearMessage();
+    };
+    CreateUserComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.subscriptions.push(this.loadingService.getIsLoadingListener().subscribe(function (loading) {
+            _this.isLoading = loading;
+        }));
+        this.subscriptions.push(this.authService.getAuthStatusListener().subscribe(function (authStatus) {
+            if (authStatus) {
+                _this.router.navigate(['/add-guests']);
+            }
+        }));
+    };
+    CreateUserComponent.prototype.ngOnDestroy = function () {
+        this.unsubscribe();
+    };
+    CreateUserComponent.prototype.unsubscribe = function () {
+        this.subscriptions.forEach(function (s) {
+            s.unsubscribe();
+        });
+        this.subscriptions = [];
+    };
+    CreateUserComponent = __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
+            selector: 'app-create-user',
+            template: __webpack_require__(/*! ./create-user.component.html */ "./src/app/admin/create-user/create-user.component.html"),
+            styles: [__webpack_require__(/*! ./create-user.component.css */ "./src/app/admin/create-user/create-user.component.css")]
+        }),
+        __metadata("design:paramtypes", [src_app_auth_auth_service__WEBPACK_IMPORTED_MODULE_1__["AuthService"],
+            src_app_services_loading_service__WEBPACK_IMPORTED_MODULE_2__["LoadingService"],
+            _angular_router__WEBPACK_IMPORTED_MODULE_3__["Router"],
+            src_app_services_message_service__WEBPACK_IMPORTED_MODULE_4__["MessageService"]])
+    ], CreateUserComponent);
+    return CreateUserComponent;
+}());
+
+
+
+/***/ }),
+
 /***/ "./src/app/admin/reports/rsvp/rsvp-report.component.css":
 /*!**************************************************************!*\
   !*** ./src/app/admin/reports/rsvp/rsvp-report.component.css ***!
@@ -546,7 +656,7 @@ module.exports = "table {\r\n    word-wrap: break-word;\r\n}\r\nli {\r\n    list
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"container\">\n  <div class=\"row\">\n    <div class=\"col-xs-4\"></div>\n    <div class=\"col-xs-4\">\n      <h1>RSVP Report</h1>\n    </div>\n  </div>\n  <div *ngIf=\"reportData && reportData.totalGuestsComing\" class=\"row\">\n    <div class=\"col-xs-6\">\n      <p><strong>Total Guests Coming: {{reportData.totalGuestsComing}}</strong></p>\n      <p><strong>Guests Who Have RSVPd and Are Not Coming: {{reportData.numberOfGuestsWhoHaveRsvpdAndAreNotComing}}</strong></p>\n      <p><strong>Number of Guests Who Have RSVPd: {{reportData.numberOfGuestsRsvpd}}</strong></p>\n    </div>\n  </div>\n  <div *ngIf=\"reportData.reportData && reportData.reportData.length > 0\" class=\"row\">\n    <div class=\"col-xs-12\">\n      <table class=\"table border border-dark\">\n        <tr>\n          <th>User</th>\n          <th>Guests Attending</th>\n          <th>Guests Not Attending</th>\n          <th>RSVPs</th>\n        </tr>\n        <tr *ngFor=\"let r of reportData.reportData\">\n          <td>{{r.userName}}</td>\n          <td class=\"border border-dark\">\n            <span *ngIf=\"r.guestsAttending.length === 0\">-</span>\n            <ul class=\"list-group\">\n                <li class=\"list-group-item\" *ngFor=\"let g of r.guestsAttending\">{{g.firstName}}&nbsp;{{g.lastName}}</li>\n            </ul>\n          </td>\n          <td class=\"border border-dark\">\n              <span *ngIf=\"r.guestsNotAttending.length === 0\">-</span>\n              <ul class=\"list-group\">\n                  <li class=\"list-group-item\" *ngFor=\"let g of r.guestsNotAttending\">{{g.firstName}}&nbsp;{{g.lastName}}</li>\n              </ul>\n          </td>\n          <td class=\"border border-dark\">\n            <ul class=\"list-group\">\n              <li *ngIf=\"r.rsvps.length === 0\">Has Not RSVP'd Yet</li>\n              <li class=\"list-group-item\" *ngFor=\"let rsvp of r.rsvps\">\n                <p>{{rsvp.dateSubmitted | date}}</p>\n                <p>Comments: {{rsvp.comments}}</p>\n              </li>\n            </ul>\n          </td>\n        </tr>\n      </table>\n    </div>\n  </div>\n</div>"
+module.exports = "<div class=\"container\">\r\n  <div class=\"row\">\r\n    <div class=\"col-xs-4\"></div>\r\n    <div class=\"col-xs-4\">\r\n      <h1>RSVP Report</h1>\r\n    </div>\r\n  </div>\r\n  <div *ngIf=\"reportData && reportData.totalGuestsComing\" class=\"row\">\r\n    <div class=\"col-xs-12\">\r\n      <p><strong>Total Guests Coming: {{reportData.totalGuestsComing}}</strong></p>\r\n      <p><strong>Guests Who Have RSVPd and Are Not Coming: {{reportData.numberOfGuestsWhoHaveRsvpdAndAreNotComing}}</strong></p>\r\n      <p><strong>Number of Guests Who Have RSVPd: {{reportData.numberOfGuestsRsvpd}}</strong></p>\r\n      <p><strong><b>Maximum Number of Attending Guests</b>&nbsp;(total invited - total that rsvp'd no): {{reportData.totalNumberOfGuests - reportData.numberOfGuestsWhoHaveRsvpdAndAreNotComing}}</strong></p>\r\n    </div>\r\n  </div>\r\n  <div *ngIf=\"reportData.reportData && reportData.reportData.length > 0\" class=\"row\">\r\n    <div class=\"col-xs-12\">\r\n      <table class=\"table border border-dark\">\r\n        <tr>\r\n          <th>User</th>\r\n          <th>Guests Attending</th>\r\n          <th>Guests Not Attending</th>\r\n          <th>RSVPs</th>\r\n        </tr>\r\n        <tr *ngFor=\"let r of reportData.reportData\">\r\n          <td>{{r.userName}}</td>\r\n          <td class=\"border border-dark\">\r\n            <span *ngIf=\"r.guestsAttending.length === 0\">-</span>\r\n            <ul class=\"list-group\">\r\n                <li class=\"list-group-item\" *ngFor=\"let g of r.guestsAttending\">{{g.firstName}}&nbsp;{{g.lastName}}</li>\r\n            </ul>\r\n          </td>\r\n          <td class=\"border border-dark\">\r\n              <span *ngIf=\"r.guestsNotAttending.length === 0\">-</span>\r\n              <ul class=\"list-group\">\r\n                  <li class=\"list-group-item\" *ngFor=\"let g of r.guestsNotAttending\">{{g.firstName}}&nbsp;{{g.lastName}}</li>\r\n              </ul>\r\n          </td>\r\n          <td class=\"border border-dark\">\r\n            <ul class=\"list-group\">\r\n              <li *ngIf=\"r.rsvps.length === 0\">Has Not RSVP'd Yet</li>\r\n              <li class=\"list-group-item\" *ngFor=\"let rsvp of r.rsvps\">\r\n                <p>{{rsvp.dateSubmitted | date}}</p>\r\n                <p>Comments: {{rsvp.comments}}</p>\r\n              </li>\r\n            </ul>\r\n          </td>\r\n        </tr>\r\n      </table>\r\n    </div>\r\n  </div>\r\n</div>"
 
 /***/ }),
 
@@ -599,7 +709,7 @@ var RsvpReportComponent = /** @class */ (function () {
                     row.rsvps = row.rsvps.map(function (rsvpObj) {
                         return {
                             dateSubmitted: rsvpObj.dateSubmitted,
-                            comments: decodeURI(rsvpObj.comments)
+                            comments: rsvpObj.comments
                         };
                     });
                 });
@@ -652,12 +762,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wedding_details_wedding_details_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./wedding-details/wedding-details.component */ "./src/app/wedding-details/wedding-details.component.ts");
 /* harmony import */ var _admin_add_guests_add_guests_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./admin/add-guests/add-guests.component */ "./src/app/admin/add-guests/add-guests.component.ts");
 /* harmony import */ var _admin_reports_rsvp_rsvp_report_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./admin/reports/rsvp/rsvp-report.component */ "./src/app/admin/reports/rsvp/rsvp-report.component.ts");
+/* harmony import */ var _admin_create_user_create_user_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./admin/create-user/create-user.component */ "./src/app/admin/create-user/create-user.component.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -680,7 +792,8 @@ var routes = [
     { path: 'rsvp-details', component: _rsvp_details_rsvp_details_component__WEBPACK_IMPORTED_MODULE_7__["RsvpDetailsComponent"], canActivate: [_auth_auth_guard__WEBPACK_IMPORTED_MODULE_6__["AuthGuard"]] },
     { path: 'wedding-details', component: _wedding_details_wedding_details_component__WEBPACK_IMPORTED_MODULE_9__["WeddingDetailsComponent"], canActivate: [_auth_auth_guard__WEBPACK_IMPORTED_MODULE_6__["AuthGuard"]] },
     { path: 'add-guests', component: _admin_add_guests_add_guests_component__WEBPACK_IMPORTED_MODULE_10__["AddGuestsComponent"], canActivate: [_auth_auth_guard__WEBPACK_IMPORTED_MODULE_6__["AuthGuard"]] },
-    { path: 'rsvp-report', component: _admin_reports_rsvp_rsvp_report_component__WEBPACK_IMPORTED_MODULE_11__["RsvpReportComponent"], canActivate: [_auth_auth_guard__WEBPACK_IMPORTED_MODULE_6__["AuthGuard"]] }
+    { path: 'rsvp-report', component: _admin_reports_rsvp_rsvp_report_component__WEBPACK_IMPORTED_MODULE_11__["RsvpReportComponent"], canActivate: [_auth_auth_guard__WEBPACK_IMPORTED_MODULE_6__["AuthGuard"]] },
+    { path: 'create-user', component: _admin_create_user_create_user_component__WEBPACK_IMPORTED_MODULE_12__["CreateUserComponent"] }
 ];
 var AppRoutingModule = /** @class */ (function () {
     function AppRoutingModule() {
@@ -844,12 +957,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _httperror_interceptor__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./httperror.interceptor */ "./src/app/httperror.interceptor.ts");
 /* harmony import */ var _admin_add_guests_add_guests_component__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./admin/add-guests/add-guests.component */ "./src/app/admin/add-guests/add-guests.component.ts");
 /* harmony import */ var _admin_reports_rsvp_rsvp_report_component__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./admin/reports/rsvp/rsvp-report.component */ "./src/app/admin/reports/rsvp/rsvp-report.component.ts");
+/* harmony import */ var _admin_create_user_create_user_component__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./admin/create-user/create-user.component */ "./src/app/admin/create-user/create-user.component.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -907,7 +1022,8 @@ var AppModule = /** @class */ (function () {
                 _wedding_details_wedding_details_component__WEBPACK_IMPORTED_MODULE_25__["WeddingDetailsComponent"],
                 _loading_spinner_loading_spinner_component__WEBPACK_IMPORTED_MODULE_28__["LoadingSpinnerComponent"],
                 _admin_add_guests_add_guests_component__WEBPACK_IMPORTED_MODULE_30__["AddGuestsComponent"],
-                _admin_reports_rsvp_rsvp_report_component__WEBPACK_IMPORTED_MODULE_31__["RsvpReportComponent"]
+                _admin_reports_rsvp_rsvp_report_component__WEBPACK_IMPORTED_MODULE_31__["RsvpReportComponent"],
+                _admin_create_user_create_user_component__WEBPACK_IMPORTED_MODULE_32__["CreateUserComponent"]
             ],
             imports: [
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["BrowserModule"],
@@ -1108,6 +1224,22 @@ var AuthService = /** @class */ (function () {
         }, function (error) {
             _this.messageService.setMessage('Your username or password was incorrect. Please try again.', 'alert-danger');
             _this.logout(false);
+        });
+    };
+    AuthService.prototype.createUser = function (username, password) {
+        var _this = this;
+        this.loadingService.setIsLoading(true);
+        var authData = { username: username, password: password };
+        this.http.post(src_environments_environment__WEBPACK_IMPORTED_MODULE_8__["environment"].apiUrl + "/user/signup", authData)
+            .subscribe(function (response) {
+            var token = response.token;
+            _this.token = token;
+            if (token) {
+                var expiresInDuration = response.expiresIn;
+                _this.loginSetup(expiresInDuration, response.userId, token);
+            }
+        }, function (error) {
+            console.log(error);
         });
     };
     AuthService.prototype.autoAuthUser = function () {
