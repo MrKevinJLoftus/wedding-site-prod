@@ -41,6 +41,21 @@ exports.runRsvpReport = (req, res, next) => {
     });
 }
 
+exports.runGuestReport = (req, res, next) => {
+    // grab all guests
+    // return them
+    console.log('calling run Guest Report');
+    getAllGuests(req, (err, guests) => {
+        if (err) {
+            next(stdError);
+        } else {
+            res.status(200).json({
+                results: guests.allGuests
+            });
+        }
+    }); 
+}
+
 function getAllUsers(req, callback) {
     console.log('calling getAllUsers');
     User.find({}, (err, users) => {

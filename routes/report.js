@@ -8,5 +8,6 @@ const adminController = require('../controllers/admin');
 const router = express.Router();
 
 router.get('/rsvp', checkAuth, adminController.runRsvpReport);
+router.get('/guest', checkAuth, adminController.runGuestReport);
 
 module.exports = router;
